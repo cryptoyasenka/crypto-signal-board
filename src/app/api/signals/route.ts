@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Server wallet not configured' }, { status: 500 });
     }
     if (message.includes('TEE')) {
-      return NextResponse.json({ error: 'AI analysis unavailable — TEE node error' }, { status: 502 });
+      return NextResponse.json({ error: `AI analysis unavailable — ${message}` }, { status: 502 });
     }
     return NextResponse.json({ error: message }, { status: 500 });
   }

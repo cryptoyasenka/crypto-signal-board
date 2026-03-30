@@ -5,27 +5,26 @@ import type { Candle } from './binance';
 const OG_RPC = 'https://ogevmdevnet.opengradient.ai';
 const TEE_REGISTRY_ADDRESS = '0x4e72238852f3c918f4E4e57AeC9280dDB0c80248' as const;
 const MODEL = 'claude-haiku-4-5';
-const PLACEHOLDER_AUTH = 'Bearer placeholder';
+const PLACEHOLDER_AUTH = 'Bearer 0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
 
-const TEE_REGISTRY_ABI = [
-  {
-    inputs: [{ name: 'workerType', type: 'uint8' }],
-    name: 'getActiveTEEs',
-    outputs: [
-      {
-        components: [
-          { name: 'teeAddress', type: 'address' },
-          { name: 'endpoint', type: 'string' },
-          { name: 'enabled', type: 'bool' },
-        ],
-        name: '',
-        type: 'tuple[]',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-] as const;
+const TEE_REGISTRY_ABI = [{
+  name: 'getActiveTEEs',
+  type: 'function',
+  inputs: [{ name: 'teeType', type: 'uint8' }],
+  outputs: [{ type: 'tuple[]', components: [
+    { name: 'owner', type: 'address' },
+    { name: 'paymentAddress', type: 'address' },
+    { name: 'endpoint', type: 'string' },
+    { name: 'publicKey', type: 'bytes' },
+    { name: 'tlsCertificate', type: 'bytes' },
+    { name: 'pcrHash', type: 'bytes32' },
+    { name: 'teeType', type: 'uint8' },
+    { name: 'enabled', type: 'bool' },
+    { name: 'registeredAt', type: 'uint256' },
+    { name: 'lastHeartbeatAt', type: 'uint256' },
+  ]}],
+  stateMutability: 'view',
+}] as const;
 
 let cachedTeeEndpoint: string | null = null;
 
