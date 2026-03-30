@@ -8,7 +8,7 @@ export interface Candle {
   closeTime: number;
 }
 
-export type Pair = 'BTCUSDT' | 'ETHUSDT';
+export type Pair = 'BTCUSDT' | 'ETHUSDT' | 'SOLUSDT' | 'DOGEUSDT' | 'XRPUSDT' | 'ADAUSDT' | 'BNBUSDT';
 
 const BINANCE_API = 'https://api.binance.com/api/v3';
 

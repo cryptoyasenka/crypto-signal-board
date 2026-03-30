@@ -8,6 +8,11 @@ import { IndicatorCard } from '@/components/indicator-card';
 import { ConsensusBar } from '@/components/consensus-bar';
 import { MacroPanel } from '@/components/macro-panel';
 import { VerdictBanner } from '@/components/verdict-banner';
+import { PriceChart } from '@/components/price-chart';
+import { SignalHistory } from '@/components/signal-history';
+import { saveToHistory } from '@/lib/history';
+import { AutoRefresh } from '@/components/auto-refresh';
+import { SkeletonLoading } from '@/components/skeleton-loading';
 import { Loader2, RefreshCw, ShieldCheck, BarChart3 } from 'lucide-react';
 
 export default function Home() {
@@ -16,6 +21,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [phase, setPhase] = useState<string>('');
+  const [historyKey, setHistoryKey] = useState(0);
 
   const analyze = useCallback(async (selectedPair?: string) => {
     const p = selectedPair ?? pair;
@@ -39,6 +45,8 @@ export default function Home() {
 
       const result: SignalResponse = await res.json();
       setData(result);
+      saveToHistory(result);
+      setHistoryKey((k) => k + 1);
       setPhase('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
@@ -57,15 +65,20 @@ export default function Home() {
     <main className="min-h-screen bg-zinc-950 text-white">
       {/* Header */}
       <div className="border-b border-zinc-800/50 bg-zinc-950/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-cyan-400" />
-            <span className="font-bold text-lg">Crypto Signal Board</span>
-            <span className="text-[10px] text-zinc-500 bg-zinc-800 px-1.5 py-0.5 rounded">
-              by OpenGradient
-            </span>
+        <div className="max-w-4xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between mb-2 sm:mb-0">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="w-5 h-5 text-cyan-400" />
+              <span className="font-bold text-lg">Crypto Signal Board</span>
+              <span className="text-[10px] text-zinc-500 bg-zinc-800 px-1.5 py-0.5 rounded hidden sm:inline">
+                by OpenGradient
+              </span>
+            </div>
+            {data && <AutoRefresh onRefresh={() => analyze()} loading={loading} />}
           </div>
-          <PairSelector selected={pair} onSelect={handlePairSelect} disabled={loading} />
+          <div className="sm:mt-0">
+            <PairSelector selected={pair} onSelect={handlePairSelect} disabled={loading} />
+          </div>
         </div>
       </div>
 
@@ -94,13 +107,7 @@ export default function Home() {
         )}
 
         {/* Loading */}
-        {loading && (
-          <div className="flex flex-col items-center justify-center py-32 text-center">
-            <Loader2 className="w-10 h-10 text-cyan-400 animate-spin mb-4" />
-            <div className="text-zinc-300 font-medium">{phase}</div>
-            <div className="text-zinc-500 text-sm mt-1">This may take 10-20 seconds</div>
-          </div>
-        )}
+        {loading && <SkeletonLoading phase={phase} />}
 
         {/* Error */}
         {error && !loading && (
@@ -129,6 +136,9 @@ export default function Home() {
               low24h={data.stats.low}
             />
 
+            {/* Price Chart */}
+            <PriceChart candles={data.candles} />
+
             {/* AI Verdict */}
             <VerdictBanner
               verdict={data.ai.combined_verdict}
@@ -149,7 +159,7 @@ export default function Home() {
             </div>
 
             {/* Indicator Cards Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {data.indicators.map((ind) => (
                 <IndicatorCard key={ind.shortName} indicator={ind} />
               ))}
@@ -158,8 +168,11 @@ export default function Home() {
             {/* Macro Risk */}
             <MacroPanel events={data.ai.macro_events} risk={data.ai.macro_risk} />
 
+            {/* Signal History */}
+            <SignalHistory refreshKey={historyKey} />
+
             {/* Footer */}
-            <div className="flex items-center justify-between pt-4 border-t border-zinc-800/50">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-4 border-t border-zinc-800/50">
               <div className="flex items-center gap-2 text-xs text-zinc-500">
                 <ShieldCheck className="w-3.5 h-3.5 text-cyan-500/50" />
                 AI analysis verified in OpenGradient TEE

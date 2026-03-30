@@ -5,6 +5,20 @@ export type { Signal, IndicatorResult };
 
 // --- helpers ---
 
+function fmtPrice(v: number): string {
+  if (Math.abs(v) >= 1000) return v.toFixed(1);
+  if (Math.abs(v) >= 1) return v.toFixed(2);
+  if (Math.abs(v) >= 0.01) return v.toFixed(4);
+  return v.toFixed(6);
+}
+
+function fmtSmall(v: number): string {
+  if (Math.abs(v) >= 100) return v.toFixed(1);
+  if (Math.abs(v) >= 1) return v.toFixed(2);
+  if (Math.abs(v) >= 0.001) return v.toFixed(4);
+  return v.toFixed(6);
+}
+
 function sma(values: number[], period: number): number[] {
   const result: number[] = [];
   for (let i = period - 1; i < values.length; i++) {
@@ -49,17 +63,17 @@ function calcSMACrossover(candles: Candle[]): IndicatorResult {
     detail = 'Death cross — SMA 20 just crossed below SMA 50';
   } else if (curr20 > curr50) {
     signal = 'bullish';
-    detail = `SMA 20 (${curr20.toFixed(1)}) is above SMA 50 (${curr50.toFixed(1)}) — uptrend`;
+    detail = `SMA 20 (${fmtPrice(curr20)}) is above SMA 50 (${fmtPrice(curr50)}) — uptrend`;
   } else if (curr20 < curr50) {
     signal = 'bearish';
-    detail = `SMA 20 (${curr20.toFixed(1)}) is below SMA 50 (${curr50.toFixed(1)}) — downtrend`;
+    detail = `SMA 20 (${fmtPrice(curr20)}) is below SMA 50 (${fmtPrice(curr50)}) — downtrend`;
   }
 
   return {
     name: 'SMA Crossover (20/50)',
     shortName: 'SMA',
     signal,
-    value: `${curr20.toFixed(1)} / ${curr50.toFixed(1)}`,
+    value: `${fmtPrice(curr20)} / ${fmtPrice(curr50)}`,
     detail,
   };
 }
@@ -78,23 +92,23 @@ function calcEMATrend(candles: Candle[]): IndicatorResult {
 
   if (price > curr12 && curr12 > curr26) {
     signal = 'bullish';
-    detail = `Price (${price.toFixed(1)}) > EMA12 (${curr12.toFixed(1)}) > EMA26 (${curr26.toFixed(1)}) — strong uptrend`;
+    detail = `Price (${fmtPrice(price)}) > EMA12 (${fmtPrice(curr12)}) > EMA26 (${fmtPrice(curr26)}) — strong uptrend`;
   } else if (price < curr12 && curr12 < curr26) {
     signal = 'bearish';
-    detail = `Price (${price.toFixed(1)}) < EMA12 (${curr12.toFixed(1)}) < EMA26 (${curr26.toFixed(1)}) — strong downtrend`;
+    detail = `Price (${fmtPrice(price)}) < EMA12 (${fmtPrice(curr12)}) < EMA26 (${fmtPrice(curr26)}) — strong downtrend`;
   } else if (curr12 > curr26) {
     signal = 'bullish';
-    detail = `EMA12 (${curr12.toFixed(1)}) above EMA26 (${curr26.toFixed(1)}) — mild uptrend`;
+    detail = `EMA12 (${fmtPrice(curr12)}) above EMA26 (${fmtPrice(curr26)}) — mild uptrend`;
   } else {
     signal = 'bearish';
-    detail = `EMA12 (${curr12.toFixed(1)}) below EMA26 (${curr26.toFixed(1)}) — mild downtrend`;
+    detail = `EMA12 (${fmtPrice(curr12)}) below EMA26 (${fmtPrice(curr26)}) — mild downtrend`;
   }
 
   return {
     name: 'EMA Trend (12/26)',
     shortName: 'EMA',
     signal,
-    value: `${curr12.toFixed(1)} / ${curr26.toFixed(1)}`,
+    value: `${fmtPrice(curr12)} / ${fmtPrice(curr26)}`,
     detail,
   };
 }
@@ -172,23 +186,23 @@ function calcMACD(candles: Candle[]): IndicatorResult {
 
   if (histogram > 0 && prevHistogram <= 0) {
     signal = 'bullish';
-    detail = `MACD crossed above signal line — bullish crossover (histogram: ${histogram.toFixed(2)})`;
+    detail = `MACD crossed above signal line — bullish crossover (histogram: ${fmtSmall(histogram)})`;
   } else if (histogram < 0 && prevHistogram >= 0) {
     signal = 'bearish';
-    detail = `MACD crossed below signal line — bearish crossover (histogram: ${histogram.toFixed(2)})`;
+    detail = `MACD crossed below signal line — bearish crossover (histogram: ${fmtSmall(histogram)})`;
   } else if (histogram > 0) {
     signal = 'bullish';
-    detail = `MACD (${macd.toFixed(2)}) above signal (${sig.toFixed(2)}) — bullish momentum`;
+    detail = `MACD (${fmtSmall(macd)}) above signal (${fmtSmall(sig)}) — bullish momentum`;
   } else if (histogram < 0) {
     signal = 'bearish';
-    detail = `MACD (${macd.toFixed(2)}) below signal (${sig.toFixed(2)}) — bearish momentum`;
+    detail = `MACD (${fmtSmall(macd)}) below signal (${fmtSmall(sig)}) — bearish momentum`;
   }
 
   return {
     name: 'MACD (12/26/9)',
     shortName: 'MACD',
     signal,
-    value: `${macd.toFixed(2)} / ${sig.toFixed(2)}`,
+    value: `${fmtSmall(macd)} / ${fmtSmall(sig)}`,
     detail,
   };
 }
@@ -211,10 +225,10 @@ function calcBollinger(candles: Candle[]): IndicatorResult {
 
   if (price >= upper) {
     signal = 'bearish';
-    detail = `Price (${price.toFixed(1)}) at upper band (${upper.toFixed(1)}) — overbought, %B: ${(percentB * 100).toFixed(0)}%`;
+    detail = `Price (${fmtPrice(price)}) at upper band (${fmtPrice(upper)}) — overbought, %B: ${(percentB * 100).toFixed(0)}%`;
   } else if (price <= lower) {
     signal = 'bullish';
-    detail = `Price (${price.toFixed(1)}) at lower band (${lower.toFixed(1)}) — oversold, %B: ${(percentB * 100).toFixed(0)}%`;
+    detail = `Price (${fmtPrice(price)}) at lower band (${fmtPrice(lower)}) — oversold, %B: ${(percentB * 100).toFixed(0)}%`;
   } else if (percentB > 0.7) {
     signal = 'bearish';
     detail = `Price near upper band — %B: ${(percentB * 100).toFixed(0)}%, potential resistance`;
@@ -227,7 +241,7 @@ function calcBollinger(candles: Candle[]): IndicatorResult {
     name: 'Bollinger Bands (20,2)',
     shortName: 'BB',
     signal,
-    value: `${lower.toFixed(0)} / ${mean.toFixed(0)} / ${upper.toFixed(0)}`,
+    value: `${fmtPrice(lower)} / ${fmtPrice(mean)} / ${fmtPrice(upper)}`,
     detail,
   };
 }

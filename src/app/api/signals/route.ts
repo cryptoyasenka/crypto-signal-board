@@ -4,7 +4,7 @@ import { analyzeAll, getConsensus } from '@/lib/indicators';
 import { getAIVerdict } from '@/lib/opengradient';
 import type { SignalResponse } from '@/lib/types';
 
-const VALID_PAIRS: Pair[] = ['BTCUSDT', 'ETHUSDT'];
+const VALID_PAIRS: Pair[] = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'DOGEUSDT', 'XRPUSDT', 'ADAUSDT', 'BNBUSDT'];
 
 export async function GET(req: NextRequest) {
   const pair = (req.nextUrl.searchParams.get('pair') ?? 'BTCUSDT').toUpperCase() as Pair;
@@ -25,13 +25,35 @@ export async function GET(req: NextRequest) {
     const indicators = analyzeAll(candles);
     const consensus = getConsensus(indicators);
 
-    // Get AI verdict with macro analysis via TEE
-    const ai = await getAIVerdict(pair, price, stats, indicators, candles);
+    // Get AI verdict with macro analysis via TEE (graceful fallback if unavailable)
+    let ai: import('@/lib/types').AIVerdict;
+    try {
+      ai = await getAIVerdict(pair, price, stats, indicators, candles);
+    } catch (teeErr) {
+      console.warn('[signals] TEE unavailable, returning indicators only:', teeErr instanceof Error ? teeErr.message : teeErr);
+      ai = {
+        macro_events: [],
+        macro_risk: 'low',
+        combined_verdict: 'neutral',
+        confidence: 0,
+        summary: 'AI analysis unavailable — TEE node could not be reached. Showing technical indicators only.',
+        txHash: null,
+      };
+    }
+
+    const miniCandles = candles.slice(-48).map((c) => ({
+      time: c.openTime,
+      open: c.open,
+      high: c.high,
+      low: c.low,
+      close: c.close,
+    }));
 
     const response: SignalResponse = {
       pair,
       price,
       stats,
+      candles: miniCandles,
       indicators,
       consensus,
       ai,
@@ -45,6 +67,10 @@ export async function GET(req: NextRequest) {
 
     if (message.includes('APP_WALLET_PRIVATE_KEY')) {
       return NextResponse.json({ error: 'Server wallet not configured' }, { status: 500 });
+    }
+    // Shorten viem contract errors
+    if (message.includes('readContract') || message.includes('eth_call')) {
+      return NextResponse.json({ error: 'Failed to connect to blockchain RPC' }, { status: 502 });
     }
     if (message.includes('TEE')) {
       return NextResponse.json({ error: `AI analysis unavailable — ${message}` }, { status: 502 });

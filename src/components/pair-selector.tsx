@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/cn';
 
-const PAIRS = ['BTCUSDT', 'ETHUSDT'] as const;
+const PAIRS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'DOGEUSDT', 'XRPUSDT', 'ADAUSDT', 'BNBUSDT'] as const;
 
 interface Props {
   selected: string;
@@ -12,7 +12,7 @@ interface Props {
 
 export function PairSelector({ selected, onSelect, disabled }: Props) {
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
       {PAIRS.map((pair) => {
         const symbol = pair.replace('USDT', '');
         const active = pair === selected;
@@ -22,7 +22,7 @@ export function PairSelector({ selected, onSelect, disabled }: Props) {
             onClick={() => onSelect(pair)}
             disabled={disabled}
             className={cn(
-              'px-4 py-2 rounded-lg text-sm font-semibold transition-all',
+              'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0',
               active
                 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
                 : 'bg-zinc-800/50 text-zinc-400 border border-zinc-700/50 hover:bg-zinc-700/50 hover:text-zinc-300',

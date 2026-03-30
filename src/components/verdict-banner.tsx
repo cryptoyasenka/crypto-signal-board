@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/cn';
-import { TrendingUp, TrendingDown, Minus, ShieldCheck } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, ShieldCheck, WifiOff } from 'lucide-react';
 
 const verdictConfig = {
   strong_buy: { icon: TrendingUp, color: 'text-emerald-300', bg: 'from-emerald-600/20 to-emerald-900/10 border-emerald-500/30', label: 'Strong Buy', emoji: '' },
@@ -19,26 +19,36 @@ interface Props {
 }
 
 export function VerdictBanner({ verdict, confidence, summary, txHash }: Props) {
+  const unavailable = confidence === 0;
   const config = verdictConfig[verdict];
-  const Icon = config.icon;
+  const Icon = unavailable ? WifiOff : config.icon;
 
   return (
-    <div className={cn('rounded-xl border bg-gradient-to-br p-6', config.bg)}>
+    <div className={cn(
+      'rounded-xl border bg-gradient-to-br p-6',
+      unavailable ? 'from-zinc-800/30 to-zinc-900/20 border-zinc-700/40' : config.bg,
+    )}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <Icon className={cn('w-8 h-8', config.color)} />
+          <Icon className={cn('w-8 h-8', unavailable ? 'text-zinc-500' : config.color)} />
           <div>
-            <div className={cn('text-2xl font-bold', config.color)}>{config.label}</div>
+            <div className={cn('text-2xl font-bold', unavailable ? 'text-zinc-400' : config.color)}>
+              {unavailable ? 'AI Unavailable' : config.label}
+            </div>
             <div className="text-xs text-zinc-400">AI Verdict</div>
           </div>
         </div>
-        <div className="text-right">
-          <div className="text-3xl font-bold text-white">{confidence}%</div>
-          <div className="text-xs text-zinc-400">Confidence</div>
-        </div>
+        {!unavailable && (
+          <div className="text-right">
+            <div className="text-3xl font-bold text-white">{confidence}%</div>
+            <div className="text-xs text-zinc-400">Confidence</div>
+          </div>
+        )}
       </div>
 
-      <p className="text-sm text-zinc-300 leading-relaxed mb-4">{summary}</p>
+      <p className={cn('text-sm leading-relaxed mb-4', unavailable ? 'text-zinc-500' : 'text-zinc-300')}>
+        {summary}
+      </p>
 
       {txHash && (
         <div className="flex items-center gap-2 text-xs text-cyan-400/70">

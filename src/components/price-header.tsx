@@ -16,10 +16,10 @@ export function PriceHeader({ pair, price, changePercent, high24h, low24h }: Pro
   const symbol = pair.replace('USDT', '');
 
   return (
-    <div className="flex items-end justify-between flex-wrap gap-4">
+    <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
       <div>
         <div className="flex items-center gap-3 mb-1">
-          <h2 className="text-3xl font-bold text-white">{symbol}/USDT</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">{symbol}/USDT</h2>
           <div
             className={cn(
               'flex items-center gap-1 px-2 py-0.5 rounded-full text-sm font-semibold',
@@ -30,7 +30,7 @@ export function PriceHeader({ pair, price, changePercent, high24h, low24h }: Pro
             {isUp ? '+' : ''}{changePercent.toFixed(2)}%
           </div>
         </div>
-        <div className="text-4xl font-bold font-mono text-white">
+        <div className="text-3xl sm:text-4xl font-bold font-mono text-white">
           ${price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </div>
       </div>

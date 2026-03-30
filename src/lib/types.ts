@@ -24,6 +24,14 @@ export interface AIVerdict {
   txHash: string | null;
 }
 
+export interface MiniCandle {
+  time: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+}
+
 export interface SignalResponse {
   pair: string;
   price: number;
@@ -34,6 +42,7 @@ export interface SignalResponse {
     volume: number;
     quoteVolume: number;
   };
+  candles: MiniCandle[];
   indicators: IndicatorResult[];
   consensus: {
     bullish: number;
