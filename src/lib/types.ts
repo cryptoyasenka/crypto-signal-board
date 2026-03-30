@@ -1,0 +1,46 @@
+export type Signal = 'bullish' | 'bearish' | 'neutral';
+
+export interface IndicatorResult {
+  name: string;
+  shortName: string;
+  signal: Signal;
+  value: string;
+  detail: string;
+}
+
+export interface MacroEvent {
+  event: string;
+  time: string;
+  impact: 'high' | 'medium' | 'low';
+  relevance: string;
+}
+
+export interface AIVerdict {
+  macro_events: MacroEvent[];
+  macro_risk: 'low' | 'medium' | 'high';
+  combined_verdict: 'strong_buy' | 'buy' | 'neutral' | 'sell' | 'strong_sell';
+  confidence: number;
+  summary: string;
+  txHash: string | null;
+}
+
+export interface SignalResponse {
+  pair: string;
+  price: number;
+  stats: {
+    priceChangePercent: number;
+    high: number;
+    low: number;
+    volume: number;
+    quoteVolume: number;
+  };
+  indicators: IndicatorResult[];
+  consensus: {
+    bullish: number;
+    bearish: number;
+    neutral: number;
+    overall: Signal;
+  };
+  ai: AIVerdict;
+  timestamp: string;
+}

@@ -1,0 +1,61 @@
+'use client';
+
+import { cn } from '@/lib/cn';
+import type { MacroEvent } from '@/lib/types';
+import { AlertTriangle, Shield, Zap } from 'lucide-react';
+
+const riskConfig = {
+  low: { icon: Shield, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30', label: 'Low Risk' },
+  medium: { icon: Zap, color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/30', label: 'Medium Risk' },
+  high: { icon: AlertTriangle, color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/30', label: 'High Risk' },
+};
+
+const impactColors = {
+  high: 'text-red-400 bg-red-500/10',
+  medium: 'text-yellow-400 bg-yellow-500/10',
+  low: 'text-zinc-400 bg-zinc-500/10',
+};
+
+interface Props {
+  events: MacroEvent[];
+  risk: 'low' | 'medium' | 'high';
+}
+
+export function MacroPanel({ events, risk }: Props) {
+  const config = riskConfig[risk];
+  const Icon = config.icon;
+
+  return (
+    <div className={cn('rounded-xl border p-5', config.bg)}>
+      <div className="flex items-center gap-2 mb-4">
+        <Icon className={cn('w-5 h-5', config.color)} />
+        <h3 className="text-white font-semibold">Macro Risk: {config.label}</h3>
+      </div>
+
+      {events.length === 0 ? (
+        <p className="text-zinc-400 text-sm">No significant macro events detected. Clear skies.</p>
+      ) : (
+        <div className="space-y-3">
+          {events.map((event, i) => (
+            <div key={i} className="flex items-start gap-3">
+              <span
+                className={cn(
+                  'text-[10px] font-bold px-1.5 py-0.5 rounded uppercase shrink-0 mt-0.5',
+                  impactColors[event.impact],
+                )}
+              >
+                {event.impact}
+              </span>
+              <div>
+                <div className="text-sm text-white font-medium">{event.event}</div>
+                <div className="text-xs text-zinc-500">
+                  {event.time} — {event.relevance}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
