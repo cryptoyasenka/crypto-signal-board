@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Crypto Signal Board
+
+Verifiable AI-powered crypto trading signals. Aggregates 6 technical indicators with macro risk analysis, all verified in OpenGradient's Trusted Execution Environment (TEE).
+
+## What it does
+
+1. Fetches real-time OHLC candles from Binance
+2. Runs 6 technical indicators locally (SMA, EMA, RSI, MACD, Bollinger Bands, Volume)
+3. Sends indicator consensus + market data to an LLM running in a TEE
+4. LLM analyzes macro events (FOMC, CPI, token unlocks) and produces a combined verdict
+5. Every AI prediction comes with a cryptographic proof — it cannot be altered after the fact
+
+## Why TEE matters
+
+- Traditional signal providers can edit predictions retroactively
+- TEE guarantees the AI ran in a secure enclave — the output is signed and immutable
+- No one (not even the server operator) can tamper with the result
+
+## Tech Stack
+
+- **Next.js 16** + React 19 + TypeScript + Tailwind CSS 4
+- **Binance API** for real-time market data
+- **OpenGradient TEE** for verified AI inference
+- **x402 Protocol** for micropayments to TEE nodes
+- **viem** for blockchain interactions
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# Install
+npm install
+
+# Set up env
+cp .env.example .env.local
+# Add your Base Sepolia wallet private key (with test tokens)
+
+# Run
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Required | Description |
+|---|---|---|
+| `APP_WALLET_PRIVATE_KEY` | Yes | Base Sepolia wallet for x402 payments |
+| `NODE_TLS_REJECT_UNAUTHORIZED` | No | Set to `0` for TEE devnet certs |
 
-## Learn More
+## Architecture
 
-To learn more about Next.js, take a look at the following resources:
+```
+Binance API --> OHLC candles (100 x 1h)
+     |
+     v
+Local TA Engine --> SMA, EMA, RSI, MACD, BB, Volume
+     |
+     v
+OpenGradient TEE (LLM) --> Macro risk + combined verdict
+     |                       with cryptographic proof
+     v
+Dashboard UI --> Price, indicators, consensus bar,
+                 macro panel, AI verdict + TEE badge
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built with [OpenGradient](https://opengradient.ai).
