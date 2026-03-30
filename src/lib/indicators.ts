@@ -6,17 +6,23 @@ export type { Signal, IndicatorResult };
 // --- helpers ---
 
 function fmtPrice(v: number): string {
-  if (Math.abs(v) >= 1000) return v.toFixed(1);
-  if (Math.abs(v) >= 1) return v.toFixed(2);
-  if (Math.abs(v) >= 0.01) return v.toFixed(4);
-  return v.toFixed(6);
+  const a = Math.abs(v);
+  if (a >= 1000) return v.toFixed(1);
+  if (a >= 1) return v.toFixed(2);
+  if (a >= 0.01) return v.toFixed(4);
+  if (a >= 0.0001) return v.toFixed(6);
+  if (a >= 0.000001) return v.toFixed(8);
+  return v.toExponential(2);
 }
 
 function fmtSmall(v: number): string {
-  if (Math.abs(v) >= 100) return v.toFixed(1);
-  if (Math.abs(v) >= 1) return v.toFixed(2);
-  if (Math.abs(v) >= 0.001) return v.toFixed(4);
-  return v.toFixed(6);
+  const a = Math.abs(v);
+  if (a === 0) return '0';
+  if (a >= 100) return v.toFixed(1);
+  if (a >= 1) return v.toFixed(2);
+  if (a >= 0.001) return v.toFixed(4);
+  if (a >= 0.000001) return v.toFixed(8);
+  return v.toExponential(2);
 }
 
 function sma(values: number[], period: number): number[] {

@@ -13,14 +13,16 @@ export function PriceChart({ candles, className }: Props) {
 
   const width = 600;
   const height = 200;
-  const padding = { top: 16, right: 8, bottom: 24, left: 52 };
-  const chartW = width - padding.left - padding.right;
-  const chartH = height - padding.top - padding.bottom;
 
   const allHighs = candles.map((c) => c.high);
   const allLows = candles.map((c) => c.low);
   const minPrice = Math.min(...allLows);
   const maxPrice = Math.max(...allHighs);
+
+  const needsWideAxis = minPrice < 0.01;
+  const padding = { top: 16, right: 8, bottom: 24, left: needsWideAxis ? 72 : 52 };
+  const chartW = width - padding.left - padding.right;
+  const chartH = height - padding.top - padding.bottom;
   const priceRange = maxPrice - minPrice || 1;
 
   const candleWidth = Math.max(2, (chartW / candles.length) * 0.7);
@@ -39,7 +41,9 @@ export function PriceChart({ candles, className }: Props) {
   const formatPrice = (p: number) => {
     if (p >= 1000) return p.toLocaleString(undefined, { maximumFractionDigits: 0 });
     if (p >= 1) return p.toFixed(2);
-    return p.toFixed(4);
+    if (p >= 0.01) return p.toFixed(4);
+    if (p >= 0.0001) return p.toFixed(6);
+    return p.toFixed(8);
   };
 
   // Time labels (show ~5 labels)

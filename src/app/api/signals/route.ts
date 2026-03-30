@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchCandles, fetchCurrentPrice, fetch24hStats, type Pair } from '@/lib/binance';
+import { fetchCandles, fetchCurrentPrice, fetch24hStats, ALL_PAIRS, type Pair } from '@/lib/binance';
 import { analyzeAll, getConsensus } from '@/lib/indicators';
 import { getAIVerdict } from '@/lib/opengradient';
 import type { SignalResponse } from '@/lib/types';
 
-const VALID_PAIRS: Pair[] = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'DOGEUSDT', 'XRPUSDT', 'ADAUSDT', 'BNBUSDT'];
-
 export async function GET(req: NextRequest) {
   const pair = (req.nextUrl.searchParams.get('pair') ?? 'BTCUSDT').toUpperCase() as Pair;
 
-  if (!VALID_PAIRS.includes(pair)) {
-    return NextResponse.json({ error: `Invalid pair. Use: ${VALID_PAIRS.join(', ')}` }, { status: 400 });
+  if (!(ALL_PAIRS as readonly string[]).includes(pair)) {
+    return NextResponse.json({ error: `Invalid pair. Use: ${ALL_PAIRS.join(', ')}` }, { status: 400 });
   }
 
   try {
