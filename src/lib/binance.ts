@@ -8,7 +8,15 @@ export interface Candle {
   closeTime: number;
 }
 
-export type Pair = 'BTCUSDT' | 'ETHUSDT' | 'SOLUSDT' | 'DOGEUSDT' | 'XRPUSDT' | 'ADAUSDT' | 'BNBUSDT';
+export const ALL_PAIRS = [
+  'BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'XRPUSDT',
+  'DOGEUSDT', 'ADAUSDT', 'AVAXUSDT', 'TRXUSDT', 'LINKUSDT',
+  'DOTUSDT', 'SUIUSDT', 'NEARUSDT', 'PEPEUSDT', 'SHIBUSDT',
+  'LTCUSDT', 'APTUSDT', 'ARBUSDT', 'OPUSDT', 'TONUSDT',
+  'TAOUSDT', 'AAVEUSDT', 'ENAUSDT', 'LITUSDT', 'XPLUSDT',
+] as const;
+
+export type Pair = (typeof ALL_PAIRS)[number];
 
 const BINANCE_API = 'https://api.binance.com/api/v3';
 
