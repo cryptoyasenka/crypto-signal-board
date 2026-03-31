@@ -13,6 +13,7 @@ import { SignalHistory } from '@/components/signal-history';
 import { saveToHistory } from '@/lib/history';
 import { AutoRefresh } from '@/components/auto-refresh';
 import { SkeletonLoading } from '@/components/skeleton-loading';
+import { ModelHubPanel } from '@/components/model-hub-panel';
 import { Loader2, RefreshCw, ShieldCheck, BarChart3 } from 'lucide-react';
 
 export default function Home() {
@@ -164,6 +165,11 @@ export default function Home() {
                 <IndicatorCard key={ind.shortName} indicator={ind} />
               ))}
             </div>
+
+            {/* Model Hub ML Predictions */}
+            {data.models && data.models.length > 0 && (
+              <ModelHubPanel predictions={data.models} />
+            )}
 
             {/* Macro Risk */}
             <MacroPanel events={data.ai.macro_events} risk={data.ai.macro_risk} />

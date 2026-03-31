@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { fetchCandles, fetchCurrentPrice, fetch24hStats, ALL_PAIRS, type Pair } from '@/lib/binance';
 import { analyzeAll, getConsensus } from '@/lib/indicators';
 import { getAIVerdict } from '@/lib/opengradient';
-import type { SignalResponse } from '@/lib/types';
+import { runModelHub } from '@/lib/og-models';
+import type { SignalResponse, ModelPrediction } from '@/lib/types';
 
 export async function GET(req: NextRequest) {
   const pair = (req.nextUrl.searchParams.get('pair') ?? 'BTCUSDT').toUpperCase() as Pair;
@@ -23,12 +24,19 @@ export async function GET(req: NextRequest) {
     const indicators = analyzeAll(candles);
     const consensus = getConsensus(indicators);
 
-    // Get AI verdict with macro analysis via TEE (graceful fallback if unavailable)
+    // Run AI verdict + Model Hub in parallel (both with graceful fallback)
     let ai: import('@/lib/types').AIVerdict;
-    try {
-      ai = await getAIVerdict(pair, price, stats, indicators, candles);
-    } catch (teeErr) {
-      console.warn('[signals] TEE unavailable, returning indicators only:', teeErr instanceof Error ? teeErr.message : teeErr);
+    let models: ModelPrediction[] = [];
+
+    const [aiResult, modelsResult] = await Promise.allSettled([
+      getAIVerdict(pair, price, stats, indicators, candles),
+      runModelHub(pair),
+    ]);
+
+    if (aiResult.status === 'fulfilled') {
+      ai = aiResult.value;
+    } else {
+      console.warn('[signals] TEE unavailable:', aiResult.reason instanceof Error ? aiResult.reason.message : aiResult.reason);
       ai = {
         macro_events: [],
         macro_risk: 'low',
@@ -37,6 +45,12 @@ export async function GET(req: NextRequest) {
         summary: 'AI analysis unavailable — TEE node could not be reached. Showing technical indicators only.',
         txHash: null,
       };
+    }
+
+    if (modelsResult.status === 'fulfilled') {
+      models = modelsResult.value;
+    } else {
+      console.warn('[signals] Model Hub unavailable:', modelsResult.reason instanceof Error ? modelsResult.reason.message : modelsResult.reason);
     }
 
     const miniCandles = candles.slice(-48).map((c) => ({
@@ -55,6 +69,7 @@ export async function GET(req: NextRequest) {
       indicators,
       consensus,
       ai,
+      models,
       timestamp: new Date().toISOString(),
     };
 

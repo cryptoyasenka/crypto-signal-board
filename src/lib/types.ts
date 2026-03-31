@@ -32,6 +32,17 @@ export interface MiniCandle {
   close: number;
 }
 
+export interface ModelPrediction {
+  modelName: string;
+  modelCid: string;
+  prediction: string;
+  rawValue: number;
+  interpretation: string;
+  signal: Signal;
+  txHash: string;
+  explorerUrl: string;
+}
+
 export interface SignalResponse {
   pair: string;
   price: number;
@@ -51,5 +62,6 @@ export interface SignalResponse {
     overall: Signal;
   };
   ai: AIVerdict;
+  models: ModelPrediction[];
   timestamp: string;
 }
