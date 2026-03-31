@@ -27,6 +27,7 @@ export async function GET(req: NextRequest) {
     // Run AI verdict + Model Hub in parallel (both with graceful fallback)
     let ai: import('@/lib/types').AIVerdict;
     let models: ModelPrediction[] = [];
+    let modelHubError: string | undefined;
 
     const [aiResult, modelsResult] = await Promise.allSettled([
       getAIVerdict(pair, price, stats, indicators, candles),
@@ -50,7 +51,9 @@ export async function GET(req: NextRequest) {
     if (modelsResult.status === 'fulfilled') {
       models = modelsResult.value;
     } else {
-      console.warn('[signals] Model Hub unavailable:', modelsResult.reason instanceof Error ? modelsResult.reason.message : modelsResult.reason);
+      const msg = modelsResult.reason instanceof Error ? modelsResult.reason.message : String(modelsResult.reason);
+      console.warn('[signals] Model Hub unavailable:', msg);
+      modelHubError = msg;
     }
 
     const miniCandles = candles.slice(-48).map((c) => ({
@@ -70,6 +73,7 @@ export async function GET(req: NextRequest) {
       consensus,
       ai,
       models,
+      modelHubError,
       timestamp: new Date().toISOString(),
     };
 

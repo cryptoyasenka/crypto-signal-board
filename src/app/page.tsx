@@ -167,9 +167,7 @@ export default function Home() {
             </div>
 
             {/* Model Hub ML Predictions */}
-            {data.models && data.models.length > 0 && (
-              <ModelHubPanel predictions={data.models} />
-            )}
+            <ModelHubPanel predictions={data.models ?? []} error={data.modelHubError} />
 
             {/* Macro Risk */}
             <MacroPanel events={data.ai.macro_events} risk={data.ai.macro_risk} />

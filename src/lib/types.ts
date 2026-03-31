@@ -63,5 +63,6 @@ export interface SignalResponse {
   };
   ai: AIVerdict;
   models: ModelPrediction[];
+  modelHubError?: string;
   timestamp: string;
 }

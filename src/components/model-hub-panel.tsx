@@ -36,8 +36,21 @@ function VolatilityBar({ value }: { value: number }) {
   );
 }
 
-export function ModelHubPanel({ predictions }: { predictions: ModelPrediction[] }) {
-  if (!predictions.length) return null;
+export function ModelHubPanel({ predictions, error }: { predictions: ModelPrediction[]; error?: string }) {
+  if (!predictions.length && !error) return null;
+
+  if (error) {
+    return (
+      <div className="rounded-xl border border-violet-500/10 bg-violet-500/5 p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <Brain className="w-4 h-4 text-violet-400/50" />
+          <h3 className="text-zinc-400 font-medium text-sm">Model Hub</h3>
+          <span className="text-[10px] text-red-400/60 bg-red-500/10 px-1.5 py-0.5 rounded">offline</span>
+        </div>
+        <p className="text-xs text-zinc-500">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-xl border border-violet-500/20 bg-violet-500/5 p-5">
