@@ -4,9 +4,6 @@ import { fetchCandles, type Pair } from './binance';
 // ETH/USDT 1-hour volatility model
 const VOLATILITY_MODEL_CID = 'QmRhcpDXfYCKsimTmJYrAVM4Bbvck59Zb2onj3MHv9Kw5N';
 
-// Token volatility model (multi-token)
-const TOKEN_VOLATILITY_CID = 'QmZdSfHWGJyzBiB2K98egzu3MypPcv4R1ASypUxwZ1MFUG';
-
 export interface ModelPrediction {
   modelName: string;
   modelCid: string;
@@ -98,7 +95,6 @@ async function runVolatilityModel(pair: Pair): Promise<ModelPrediction> {
 
 /**
  * Run all available Model Hub models for the given pair.
- * Currently: volatility model (works for any pair — uses actual candle data).
  */
 export async function runModelHub(pair: Pair): Promise<ModelPrediction[]> {
   const results: ModelPrediction[] = [];
@@ -108,6 +104,7 @@ export async function runModelHub(pair: Pair): Promise<ModelPrediction[]> {
     results.push(volResult);
   } catch (err) {
     console.error('[og-models] Volatility model failed:', err instanceof Error ? err.message : err);
+    throw err;
   }
 
   return results;
