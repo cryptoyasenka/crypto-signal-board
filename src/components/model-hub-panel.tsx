@@ -73,7 +73,7 @@ export function ModelHubPanel({ predictions, error }: { predictions: ModelPredic
           <div key={pred.modelCid} className="rounded-lg border border-og-mid/50 og-card p-4">
             <div className="flex items-start justify-between mb-2">
               <div>
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <span className="text-sm font-medium text-white">{pred.modelName}</span>
                   <SignalBadge signal={pred.signal} />
                 </div>
@@ -83,7 +83,7 @@ export function ModelHubPanel({ predictions, error }: { predictions: ModelPredic
               </div>
               <div className="text-right">
                 <div className="text-lg font-bold text-white">{pred.prediction}</div>
-                <span className="text-[10px] text-zinc-500">predicted vol</span>
+                <span className="text-[10px] text-zinc-500">1h predicted vol</span>
               </div>
             </div>
 

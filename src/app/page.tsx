@@ -93,7 +93,7 @@ export default function Home() {
                 Crypto Signal Board
               </h1>
               <p className="text-zinc-400 text-lg leading-relaxed mb-3">
-                Pick any of 25 trading pairs and get an instant short-term signal — technical indicators from 48 hours of market data, combined with an AI macro-risk verdict.
+                Pick any of 25 trading pairs and get a 1-hour trading signal — technical indicators from 48 hours of market data, combined with an AI macro-risk verdict.
               </p>
               <p className="text-zinc-500 leading-relaxed">
                 Every AI prediction runs inside an{' '}
@@ -197,7 +197,7 @@ export default function Home() {
             />
 
             <div className="rounded-xl border border-og-mid/50 og-card p-5">
-              <h3 className="text-white font-semibold mb-4">Technical Indicators</h3>
+              <h3 className="text-white font-semibold mb-4">Technical Indicators <span className="text-zinc-500 font-normal text-sm">— based on last 48h</span></h3>
               <ConsensusBar
                 bullish={data.consensus.bullish}
                 bearish={data.consensus.bearish}

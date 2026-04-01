@@ -35,7 +35,7 @@ export function VerdictBanner({ verdict, confidence, summary, txHash }: Props) {
             <div className={cn('text-2xl font-bold', unavailable ? 'text-zinc-400' : config.color)}>
               {unavailable ? 'AI Unavailable' : config.label}
             </div>
-            <div className="text-xs text-zinc-400">AI Verdict</div>
+            <div className="text-xs text-zinc-400">AI Verdict — 1h outlook</div>
           </div>
         </div>
         {!unavailable && (
