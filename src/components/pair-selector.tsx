@@ -13,6 +13,7 @@ const PAIRS = [
 ] as const;
 
 const TOP_PAIRS = PAIRS.slice(0, 7);
+const MOBILE_PAIRS = PAIRS.slice(0, 3);
 
 interface Props {
   selected: string;
@@ -49,9 +50,9 @@ export function PairSelector({ selected, onSelect, disabled }: Props) {
   const isInTopRow = TOP_PAIRS.includes(selected as typeof TOP_PAIRS[number]);
 
   return (
-    <div className="flex items-center gap-1.5" ref={dropdownRef}>
-      <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
-        {TOP_PAIRS.map((pair) => {
+    <div className="flex items-center gap-1.5 min-w-0" ref={dropdownRef}>
+      <div className="flex gap-1.5 overflow-x-auto scrollbar-hide min-w-0 flex-1">
+        {TOP_PAIRS.map((pair, idx) => {
           const symbol = pair.replace('USDT', '');
           const active = pair === selected;
           return (
@@ -65,6 +66,7 @@ export function PairSelector({ selected, onSelect, disabled }: Props) {
                   ? 'bg-og-primary/20 text-og-primary border border-og-primary/40'
                   : 'bg-og-card/50 text-zinc-400 border border-og-mid/50 hover:bg-og-mid/50 hover:text-zinc-300',
                 disabled && 'opacity-50 cursor-not-allowed',
+                idx >= MOBILE_PAIRS.length && 'hidden sm:block',
               )}
             >
               {symbol}
