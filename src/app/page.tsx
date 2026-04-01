@@ -70,11 +70,10 @@ export default function Home() {
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={() => { setData(null); setError(null); setLoading(false); }}
-              className="flex items-center gap-2.5 px-4 py-2 rounded-lg border border-og-mid/50 bg-og-card/60 hover:border-og-primary/40 hover:bg-og-card transition-all group"
+              className="flex items-center gap-3 px-4 py-2 rounded-lg border border-og-mid/50 bg-og-card/60 hover:border-og-primary/40 hover:bg-og-card transition-all group"
             >
-              <div data-og-logo="wordmark" className="h-6" />
-              <div className="h-4 w-px bg-og-mid/60 hidden sm:block" />
-              <span className="text-sm font-bold text-white group-hover:text-og-primary transition-colors hidden sm:inline tracking-tight">
+              <div data-og-logo="wordmark" className="h-7" />
+              <span className="text-lg font-bold text-white group-hover:text-og-primary transition-colors hidden sm:inline tracking-tight">
                 Signal Board
               </span>
             </button>
