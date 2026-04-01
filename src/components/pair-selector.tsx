@@ -51,7 +51,7 @@ export function PairSelector({ selected, onSelect, disabled }: Props) {
 
   return (
     <div className="flex items-center gap-1.5 min-w-0" ref={dropdownRef}>
-      <div className="flex gap-1.5 overflow-x-auto scrollbar-hide min-w-0 flex-1">
+      <div className="flex gap-1.5 overflow-hidden sm:overflow-x-auto scrollbar-hide min-w-0 flex-1">
         {TOP_PAIRS.map((pair, idx) => {
           const symbol = pair.replace('USDT', '');
           const active = pair === selected;
