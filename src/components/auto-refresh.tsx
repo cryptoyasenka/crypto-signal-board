@@ -64,7 +64,7 @@ export function AutoRefresh({ onRefresh, loading, intervalSec = 60 }: Props) {
     <button
       onClick={() => setEnabled(!enabled)}
       className={cn(
-        'relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all overflow-hidden',
+        'relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all overflow-hidden og-btn',
         enabled
           ? 'bg-og-primary/15 text-og-primary border border-og-primary/30'
           : 'bg-og-card/50 text-zinc-400 border border-og-mid/50 hover:bg-og-mid/50',

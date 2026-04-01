@@ -60,7 +60,7 @@ export function PairSelector({ selected, onSelect, disabled }: Props) {
               onClick={() => { onSelect(pair); setOpen(false); }}
               disabled={disabled}
               className={cn(
-                'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0',
+                'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 og-btn',
                 active
                   ? 'bg-og-primary/20 text-og-primary border border-og-primary/40'
                   : 'bg-og-card/50 text-zinc-400 border border-og-mid/50 hover:bg-og-mid/50 hover:text-zinc-300',
@@ -78,7 +78,7 @@ export function PairSelector({ selected, onSelect, disabled }: Props) {
           onClick={() => setOpen(!open)}
           disabled={disabled}
           className={cn(
-            'flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0',
+            'flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 og-btn',
             !isInTopRow && selected !== 'BTCUSDT'
               ? 'bg-og-primary/20 text-og-primary border border-og-primary/40'
               : 'bg-og-card/50 text-zinc-400 border border-og-mid/50 hover:bg-og-mid/50 hover:text-zinc-300',

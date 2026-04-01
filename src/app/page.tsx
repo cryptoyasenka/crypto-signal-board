@@ -70,7 +70,7 @@ export default function Home() {
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={() => { setData(null); setError(null); setLoading(false); }}
-              className="flex items-center gap-3 px-4 py-2 rounded-lg border border-og-mid/50 bg-og-card/60 hover:border-og-primary/40 hover:bg-og-card transition-all group"
+              className="flex items-center gap-3 px-4 py-2 rounded-lg border border-og-mid/50 bg-og-card/60 hover:border-og-primary/40 hover:bg-og-card transition-all group og-btn"
             >
               <div data-og-logo="wordmark" className="h-7" />
               <span className="text-lg font-bold text-white group-hover:text-og-primary transition-colors hidden sm:inline tracking-tight">
@@ -131,7 +131,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <button
                 onClick={() => analyze()}
-                className="flex items-center gap-2.5 bg-og-primary hover:bg-og-soft text-og-navy font-semibold px-8 py-3.5 rounded-xl transition-colors text-lg"
+                className="flex items-center gap-2.5 bg-og-primary hover:bg-og-soft text-og-navy font-semibold px-8 py-3.5 rounded-xl transition-all text-lg og-btn-primary"
               >
                 <BarChart3 className="w-5 h-5" />
                 Analyze Token
@@ -151,7 +151,7 @@ export default function Home() {
             <div className="text-zinc-400 text-sm mb-6 max-w-md">{error}</div>
             <button
               onClick={() => analyze()}
-              className="flex items-center gap-2 bg-og-card hover:bg-og-mid text-white px-4 py-2 rounded-lg transition-colors text-sm border border-og-mid/50"
+              className="flex items-center gap-2 bg-og-card hover:bg-og-mid text-white px-4 py-2 rounded-lg transition-all text-sm border border-og-mid/50 og-btn"
             >
               <RefreshCw className="w-4 h-4" />
               Try Again
@@ -282,7 +282,7 @@ export default function Home() {
                 </span>
                 <button
                   onClick={() => analyze()}
-                  className="flex items-center gap-1.5 bg-og-card hover:bg-og-mid text-zinc-300 px-3 py-1.5 rounded-lg transition-colors text-xs border border-og-mid/50"
+                  className="flex items-center gap-1.5 bg-og-card hover:bg-og-mid text-zinc-300 px-3 py-1.5 rounded-lg transition-all text-xs border border-og-mid/50 og-btn"
                 >
                   <RefreshCw className="w-3 h-3" />
                   Refresh

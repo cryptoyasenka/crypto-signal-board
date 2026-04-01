@@ -44,3 +44,32 @@
   background: rgba(20, 30, 50, 0.5);
   border-color: rgba(29, 44, 75, 0.5);
 }
+
+/* OG button depth — subtle inset highlight + shadow */
+.og-btn {
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.04) inset,
+    0 2px 6px rgba(0, 0, 0, 0.35);
+}
+.og-btn:hover {
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
+    0 4px 12px rgba(0, 0, 0, 0.45);
+}
+.og-btn:active {
+  box-shadow:
+    0 1px 0 0 rgba(0, 0, 0, 0.1) inset,
+    0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Primary CTA button glow */
+.og-btn-primary {
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
+    0 4px 14px rgba(36, 188, 227, 0.25);
+}
+.og-btn-primary:hover {
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.15) inset,
+    0 6px 20px rgba(36, 188, 227, 0.35);
+}
