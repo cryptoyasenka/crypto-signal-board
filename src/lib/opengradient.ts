@@ -4,6 +4,7 @@ import type { Candle } from './binance';
 
 const OG_RPC = 'https://ogevmdevnet.opengradient.ai';
 const TEE_REGISTRY_ADDRESS = '0x4e72238852f3c918f4E4e57AeC9280dDB0c80248' as const;
+const FALLBACK_TEE_ENDPOINT = 'https://3.147.79.53';
 const MODEL = 'claude-haiku-4-5';
 const PLACEHOLDER_AUTH = 'Bearer 0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
 
@@ -31,41 +32,51 @@ let cachedTeeEndpoint: string | null = null;
 async function getTeeEndpoint(): Promise<string> {
   if (cachedTeeEndpoint) return cachedTeeEndpoint;
 
-  const { createPublicClient, http } = await import('viem');
-  const client = createPublicClient({
-    transport: http(OG_RPC),
-    chain: {
-      id: 10740,
-      name: 'OG EVM Devnet',
-      nativeCurrency: { name: 'OPG', symbol: 'OPG', decimals: 18 },
-      rpcUrls: { default: { http: [OG_RPC] } },
-    },
-  });
+  // Try on-chain registry first, fall back to known TEE endpoint
+  try {
+    const { createPublicClient, http } = await import('viem');
+    const client = createPublicClient({
+      transport: http(OG_RPC),
+      chain: {
+        id: 10740,
+        name: 'OG EVM Devnet',
+        nativeCurrency: { name: 'OPG', symbol: 'OPG', decimals: 18 },
+        rpcUrls: { default: { http: [OG_RPC] } },
+      },
+    });
 
-  const tees = (await client.readContract({
-    address: TEE_REGISTRY_ADDRESS,
-    abi: TEE_REGISTRY_ABI,
-    functionName: 'getActiveTEEs',
-    args: [0],
-  })) as unknown as Array<{ endpoint: string; enabled: boolean }>;
+    const tees = (await client.readContract({
+      address: TEE_REGISTRY_ADDRESS,
+      abi: TEE_REGISTRY_ABI,
+      functionName: 'getActiveTEEs',
+      args: [0],
+    })) as unknown as Array<{ endpoint: string; enabled: boolean }>;
 
-  const active = tees.filter((t) => t.enabled && t.endpoint);
-  if (!active.length) throw new Error('No active TEE nodes found');
+    const active = tees.filter((t) => t.enabled && t.endpoint);
+    if (active.length) {
+      cachedTeeEndpoint = active[0].endpoint + '/v1/chat/completions';
+      console.log('[og] TEE endpoint (registry):', cachedTeeEndpoint);
+      return cachedTeeEndpoint;
+    }
+  } catch (err) {
+    console.warn('[og] Registry lookup failed, using fallback:', err instanceof Error ? err.message : err);
+  }
 
-  cachedTeeEndpoint = active[0].endpoint + '/v1/chat/completions';
-  console.log('[og] TEE endpoint:', cachedTeeEndpoint);
+  cachedTeeEndpoint = FALLBACK_TEE_ENDPOINT + '/v1/chat/completions';
+  console.log('[og] TEE endpoint (fallback):', cachedTeeEndpoint);
   return cachedTeeEndpoint;
 }
 
 async function teeNodeFetch(url: string, init: RequestInit): Promise<Response> {
+  // Ensure TLS verification is disabled for self-signed TEE certs
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60_000);
   try {
     return await fetch(url, {
       ...init,
       signal: controller.signal,
-      // @ts-expect-error -- Node fetch option for self-signed TEE certs
-      agent: undefined,
     });
   } finally {
     clearTimeout(timeout);
@@ -160,7 +171,7 @@ async function createUptoPayment(
 }
 
 async function callTEE(prompt: string): Promise<{ content: string; txHash: string | null }> {
-  const privateKey = process.env.APP_WALLET_PRIVATE_KEY;
+  const privateKey = process.env.APP_WALLET_PRIVATE_KEY?.trim();
   if (!privateKey) throw new Error('APP_WALLET_PRIVATE_KEY not set');
 
   const teeUrl = await getTeeEndpoint();
