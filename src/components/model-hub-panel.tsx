@@ -53,12 +53,19 @@ export function ModelHubPanel({ predictions, error }: { predictions: ModelPredic
 
   return (
     <div className="rounded-xl border border-og-primary/20 bg-og-primary/5 p-5">
-      <div className="flex items-center gap-2 mb-4">
-        <Brain className="w-4 h-4 text-og-primary" />
-        <h3 className="text-white font-semibold">Model Hub — ML Predictions</h3>
-        <span className="text-[10px] text-og-primary/60 bg-og-primary/10 px-1.5 py-0.5 rounded font-mono">
-          ONNX Model
-        </span>
+      <div className="mb-4">
+        <div className="flex items-center gap-2 mb-1.5">
+          <Brain className="w-4 h-4 text-og-primary" />
+          <h3 className="text-white font-semibold">Model Hub — ML Predictions</h3>
+          <span className="text-[10px] text-og-primary/60 bg-og-primary/10 px-1.5 py-0.5 rounded font-mono">
+            ONNX Model
+          </span>
+        </div>
+        <p className="text-xs text-zinc-500 ml-6">
+          Volatility prediction from an ONNX neural network hosted on{' '}
+          <a href="https://hub.opengradient.ai" target="_blank" rel="noopener noreferrer" className="text-og-primary/60 hover:text-og-primary transition-colors">OpenGradient Model Hub</a>.
+          Shows expected price movement magnitude over the next hour.
+        </p>
       </div>
 
       <div className="space-y-4">

@@ -27,9 +27,14 @@ export function MacroPanel({ events, risk }: Props) {
 
   return (
     <div className={cn('rounded-xl border p-5', config.bg)}>
-      <div className="flex items-center gap-2 mb-4">
-        <Icon className={cn('w-5 h-5', config.color)} />
-        <h3 className="text-white font-semibold">Macro Risk: {config.label}</h3>
+      <div className="mb-4">
+        <div className="flex items-center gap-2 mb-1.5">
+          <Icon className={cn('w-5 h-5', config.color)} />
+          <h3 className="text-white font-semibold">Macro Risk: {config.label}</h3>
+        </div>
+        <p className="text-xs text-zinc-500 ml-7">
+          AI-assessed macro environment based on upcoming economic events (FOMC, CPI, ETF decisions, regulatory news) that may impact crypto markets.
+        </p>
       </div>
 
       {events.length === 0 ? (
