@@ -55,7 +55,6 @@ async function getTeeEndpoint(): Promise<string> {
     const active = tees.filter((t) => t.enabled && t.endpoint);
     if (active.length) {
       cachedTeeEndpoint = active[0].endpoint + '/v1/chat/completions';
-      console.log('[og] TEE endpoint (registry):', cachedTeeEndpoint);
       return cachedTeeEndpoint;
     }
   } catch (err) {
@@ -63,7 +62,6 @@ async function getTeeEndpoint(): Promise<string> {
   }
 
   cachedTeeEndpoint = FALLBACK_TEE_ENDPOINT + '/v1/chat/completions';
-  console.log('[og] TEE endpoint (fallback):', cachedTeeEndpoint);
   return cachedTeeEndpoint;
 }
 
@@ -189,7 +187,6 @@ async function callTEE(prompt: string): Promise<{ content: string; txHash: strin
   };
 
   // Step 1: probe
-  console.log('[og] Probing TEE...');
   const probe = await teeNodeFetch(teeUrl, { method: 'POST', headers, body });
 
   if (probe.status !== 402) {
@@ -214,7 +211,6 @@ async function callTEE(prompt: string): Promise<{ content: string; txHash: strin
   if (!req) throw new Error('No payment option found');
 
   // Step 3: pay and send
-  console.log('[og] Sending payment...');
   const payment = await createUptoPayment(privateKey, req);
   const fullPayment = {
     ...payment,

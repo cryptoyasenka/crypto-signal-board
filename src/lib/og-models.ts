@@ -40,11 +40,9 @@ async function tryOnnxInference(ohlcFlat: number[]): Promise<number | null> {
     const value = results.Y.data[0] as number;
 
     onnxAvailable = true;
-    console.log('[og-models] ONNX runtime inference OK');
     return Math.abs(value);
   } catch {
     onnxAvailable = false;
-    console.warn('[og-models] onnxruntime-node unavailable, using TS fallback');
     return null;
   }
 }
@@ -78,16 +76,12 @@ async function runVolatilityModel(pair: Pair): Promise<ModelPrediction> {
   const candles30m = await fetchCandles(pair, '30m', 10);
   const ohlcFlat = candles30m.flatMap((c) => [c.open, c.high, c.low, c.close]);
 
-  console.log('[og-models] Running volatility model for', pair, '- input:', candles30m.length, 'candles');
-
   // Try ONNX runtime first, fallback to TS
   let volatility = await tryOnnxInference(ohlcFlat);
   const engine = volatility !== null ? 'onnxruntime' : 'ts-fallback';
   if (volatility === null) {
     volatility = tsFallbackInference(ohlcFlat);
   }
-
-  console.log(`[og-models] Volatility (${engine}):`, volatility);
 
   let interpretation: string;
   let signal: 'bullish' | 'bearish' | 'neutral';

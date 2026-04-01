@@ -37,7 +37,6 @@ export async function GET(req: NextRequest) {
     if (aiResult.status === 'fulfilled') {
       ai = aiResult.value;
     } else {
-      console.warn('[signals] TEE unavailable:', aiResult.reason instanceof Error ? aiResult.reason.message : aiResult.reason);
       ai = {
         macro_events: [],
         macro_risk: 'low',
@@ -51,9 +50,7 @@ export async function GET(req: NextRequest) {
     if (modelsResult.status === 'fulfilled') {
       models = modelsResult.value;
     } else {
-      const msg = modelsResult.reason instanceof Error ? modelsResult.reason.message : String(modelsResult.reason);
-      console.warn('[signals] Model Hub unavailable:', msg);
-      modelHubError = msg;
+      modelHubError = modelsResult.reason instanceof Error ? modelsResult.reason.message : String(modelsResult.reason);
     }
 
     const miniCandles = candles.slice(-48).map((c) => ({
