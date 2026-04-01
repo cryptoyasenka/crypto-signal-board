@@ -13,7 +13,7 @@ const PAIRS = [
 ] as const;
 
 const TOP_PAIRS = PAIRS.slice(0, 7);
-const MOBILE_COUNT = 4;
+const MOBILE_COUNT = 2;
 
 interface Props {
   selected: string;
