@@ -65,67 +65,80 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-og-navy text-white">
       {/* Header */}
-      <div className="border-b border-og-mid/50 bg-og-navy/90 backdrop-blur-md sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
+      <div className="border-b border-og-mid/40 bg-og-navy/95 backdrop-blur-md sticky top-0 z-10">
+        <div className="max-w-5xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between mb-4">
             <button
               onClick={() => { setData(null); setError(null); setLoading(false); }}
-              className="flex items-center gap-2.5 hover:opacity-90 transition-opacity group"
+              className="flex items-center gap-3 group"
             >
-              <div data-og-logo="wordmark" className="h-6" />
-              <span className="text-base font-semibold text-white group-hover:text-og-primary transition-colors hidden sm:inline">
+              <div data-og-logo="wordmark" className="h-7" />
+              <div className="h-5 w-px bg-og-mid/60 hidden sm:block" />
+              <span className="text-lg font-bold text-white group-hover:text-og-primary transition-colors hidden sm:inline tracking-tight">
                 Signal Board
               </span>
             </button>
             {data && <AutoRefresh onRefresh={() => analyze()} loading={loading} />}
           </div>
-          <div className="mt-3">
-            <PairSelector selected={pair} onSelect={handlePairSelect} disabled={loading} />
-          </div>
+          <PairSelector selected={pair} onSelect={handlePairSelect} disabled={loading} />
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-6 py-10">
         {/* Initial state */}
         {!data && !loading && !error && (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-20 h-20 rounded-2xl og-hero-gradient border border-og-mid/50 flex items-center justify-center mb-6">
-              <BarChart3 className="w-10 h-10 text-og-primary" />
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-light tracking-tight mb-3">
-              Crypto Signal Board
-            </h1>
-            <p className="text-zinc-400 max-w-lg mb-6 leading-relaxed">
-              Select a trading pair, get an instant short-term signal: 6 technical indicators calculated from 48 hours of candle data, combined with an AI macro-risk verdict generated inside an{' '}
-              <span className="text-og-primary">OpenGradient TEE</span> — cryptographically verified so no one can tamper with the result.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl mb-10 text-left">
-              <div className="rounded-xl border border-og-mid/50 og-card p-4">
-                <BarChart3 className="w-5 h-5 text-og-primary mb-2" />
-                <div className="text-sm font-medium text-zinc-200 mb-1">Technical Analysis</div>
-                <p className="text-xs text-zinc-500 leading-relaxed">SMA, EMA, RSI, MACD, Bollinger Bands, Volume — computed from Binance 1h candles.</p>
-              </div>
-              <div className="rounded-xl border border-og-mid/50 og-card p-4">
-                <ShieldCheck className="w-5 h-5 text-og-success mb-2" />
-                <div className="text-sm font-medium text-zinc-200 mb-1">TEE-Verified AI</div>
-                <p className="text-xs text-zinc-500 leading-relaxed">LLM runs inside a Trusted Execution Environment. Every prediction is signed and tamper-proof.</p>
-              </div>
-              <div className="rounded-xl border border-og-mid/50 og-card p-4">
-                <Brain className="w-5 h-5 text-og-soft mb-2" />
-                <div className="text-sm font-medium text-zinc-200 mb-1">ML Volatility Forecast</div>
-                <p className="text-xs text-zinc-500 leading-relaxed">ONNX model from OpenGradient Model Hub predicts 1-hour price volatility.</p>
-              </div>
+          <div className="py-12">
+            {/* Hero */}
+            <div className="max-w-2xl mb-14">
+              <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-5 leading-[1.1]">
+                Crypto Signal Board
+              </h1>
+              <p className="text-zinc-400 text-lg leading-relaxed mb-3">
+                Pick any of 25 trading pairs and get an instant short-term signal — technical indicators from 48 hours of market data, combined with an AI macro-risk verdict.
+              </p>
+              <p className="text-zinc-500 leading-relaxed">
+                Every AI prediction runs inside an{' '}
+                <span className="text-og-primary font-medium">OpenGradient TEE</span>{' '}
+                and is cryptographically signed, so no one can tamper with the result.
+              </p>
             </div>
 
-            <button
-              onClick={() => analyze()}
-              className="flex items-center gap-2 bg-og-primary hover:bg-og-soft text-og-navy font-semibold px-8 py-3.5 rounded-xl transition-colors text-lg"
-            >
-              <BarChart3 className="w-5 h-5" />
-              Analyze Token
-            </button>
-            <p className="text-zinc-600 text-xs mt-3">Select any of 25 pairs above, then click Analyze</p>
+            {/* Feature cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-14">
+              <div className="rounded-xl border border-og-mid/40 og-card p-5 hover:border-og-primary/30 transition-colors">
+                <div className="w-10 h-10 rounded-lg bg-og-primary/10 flex items-center justify-center mb-4">
+                  <BarChart3 className="w-5 h-5 text-og-primary" />
+                </div>
+                <div className="text-[15px] font-semibold text-white mb-2">Technical Analysis</div>
+                <p className="text-sm text-zinc-500 leading-relaxed">SMA, EMA, RSI, MACD, Bollinger Bands &amp; Volume — computed from Binance 1-hour candles in real time.</p>
+              </div>
+              <div className="rounded-xl border border-og-mid/40 og-card p-5 hover:border-og-success/30 transition-colors">
+                <div className="w-10 h-10 rounded-lg bg-og-success/10 flex items-center justify-center mb-4">
+                  <ShieldCheck className="w-5 h-5 text-og-success" />
+                </div>
+                <div className="text-[15px] font-semibold text-white mb-2">TEE-Verified AI</div>
+                <p className="text-sm text-zinc-500 leading-relaxed">LLM runs inside a Trusted Execution Environment. Every prediction is signed and tamper-proof.</p>
+              </div>
+              <div className="rounded-xl border border-og-mid/40 og-card p-5 hover:border-og-soft/30 transition-colors">
+                <div className="w-10 h-10 rounded-lg bg-og-soft/10 flex items-center justify-center mb-4">
+                  <Brain className="w-5 h-5 text-og-soft" />
+                </div>
+                <div className="text-[15px] font-semibold text-white mb-2">ML Volatility Forecast</div>
+                <p className="text-sm text-zinc-500 leading-relaxed">ONNX model from OpenGradient Model Hub predicts 1-hour price volatility for any selected pair.</p>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <button
+                onClick={() => analyze()}
+                className="flex items-center gap-2.5 bg-og-primary hover:bg-og-soft text-og-navy font-semibold px-8 py-3.5 rounded-xl transition-colors text-lg"
+              >
+                <BarChart3 className="w-5 h-5" />
+                Analyze Token
+              </button>
+              <span className="text-zinc-500 text-sm">Select any of 25 pairs above, then click Analyze</span>
+            </div>
           </div>
         )}
 
