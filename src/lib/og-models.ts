@@ -1,5 +1,6 @@
 import * as ort from 'onnxruntime-node';
 import path from 'path';
+import fs from 'fs';
 import { fetchCandles, type Pair } from './binance';
 
 const MODEL_PATH = path.join(process.cwd(), 'models', 'volatility.onnx');
@@ -20,6 +21,9 @@ let session: ort.InferenceSession | null = null;
 
 async function getSession(): Promise<ort.InferenceSession> {
   if (session) return session;
+  if (!fs.existsSync(MODEL_PATH)) {
+    throw new Error('Model file not found — models/volatility.onnx is missing');
+  }
   session = await ort.InferenceSession.create(MODEL_PATH);
   return session;
 }
