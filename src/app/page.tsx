@@ -14,7 +14,7 @@ import { saveToHistory } from '@/lib/history';
 import { AutoRefresh } from '@/components/auto-refresh';
 import { SkeletonLoading } from '@/components/skeleton-loading';
 import { ModelHubPanel } from '@/components/model-hub-panel';
-import { Loader2, RefreshCw, ShieldCheck, BarChart3 } from 'lucide-react';
+import { RefreshCw, ShieldCheck, BarChart3, Code2, Brain, Lock, ExternalLink } from 'lucide-react';
 
 export default function Home() {
   const [pair, setPair] = useState('BTCUSDT');
@@ -175,6 +175,40 @@ export default function Home() {
             {/* Signal History */}
             <SignalHistory refreshKey={historyKey} />
 
+            {/* About */}
+            <div className="rounded-xl border border-zinc-800/50 bg-zinc-900/30 p-5">
+              <h3 className="text-white font-semibold mb-3">How it works</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="flex gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0">
+                    <BarChart3 className="w-4 h-4 text-cyan-400" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-zinc-200">Technical Analysis</div>
+                    <p className="text-xs text-zinc-500 mt-0.5">6 indicators (SMA, EMA, RSI, MACD, Bollinger, Volume) computed locally from Binance candles.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                    <Lock className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-zinc-200">TEE-Verified AI</div>
+                    <p className="text-xs text-zinc-500 mt-0.5">LLM runs inside a Trusted Execution Environment — predictions are cryptographically signed and tamper-proof.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
+                    <Brain className="w-4 h-4 text-violet-400" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-zinc-200">ML Model Hub</div>
+                    <p className="text-xs text-zinc-500 mt-0.5">ONNX volatility model from OpenGradient Model Hub forecasts 1-hour price movement.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Footer */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-4 border-t border-zinc-800/50">
               <div className="flex items-center gap-2 text-xs text-zinc-500">
@@ -182,6 +216,24 @@ export default function Home() {
                 AI analysis verified in OpenGradient TEE
               </div>
               <div className="flex items-center gap-3">
+                <a
+                  href="https://github.com/cryptoyasenka/crypto-signal-board"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+                >
+                  <Code2 className="w-3.5 h-3.5" />
+                  GitHub
+                </a>
+                <a
+                  href="https://opengradient.ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                  OpenGradient
+                </a>
                 <span className="text-xs text-zinc-600">
                   {new Date(data.timestamp).toLocaleTimeString()}
                 </span>
