@@ -52,7 +52,7 @@ export function PairSelector({ selected, onSelect, disabled }: Props) {
   return (
     <div className="flex items-center gap-1.5" ref={dropdownRef}>
       {/* Mobile: only first MOBILE_COUNT pairs */}
-      <div className="flex gap-1.5 sm:hidden">
+      <div className="flex gap-1.5 flex-1 sm:hidden">
         {TOP_PAIRS.slice(0, MOBILE_COUNT).map((pair) => {
           const symbol = pair.replace('USDT', '');
           const active = pair === selected;
@@ -62,7 +62,7 @@ export function PairSelector({ selected, onSelect, disabled }: Props) {
               onClick={() => { onSelect(pair); setOpen(false); }}
               disabled={disabled}
               className={cn(
-                'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 og-btn',
+                'flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap text-center og-btn',
                 active
                   ? 'bg-og-primary/20 text-og-primary border border-og-primary/40'
                   : 'bg-og-card/50 text-zinc-400 border border-og-mid/50 hover:bg-og-mid/50 hover:text-zinc-300',
@@ -75,7 +75,7 @@ export function PairSelector({ selected, onSelect, disabled }: Props) {
         })}
       </div>
       {/* Desktop: all TOP_PAIRS */}
-      <div className="hidden sm:flex gap-1.5 overflow-x-auto scrollbar-hide">
+      <div className="hidden sm:flex gap-1.5 flex-1">
         {TOP_PAIRS.map((pair) => {
           const symbol = pair.replace('USDT', '');
           const active = pair === selected;
@@ -85,7 +85,7 @@ export function PairSelector({ selected, onSelect, disabled }: Props) {
               onClick={() => { onSelect(pair); setOpen(false); }}
               disabled={disabled}
               className={cn(
-                'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 og-btn',
+                'flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap text-center og-btn',
                 active
                   ? 'bg-og-primary/20 text-og-primary border border-og-primary/40'
                   : 'bg-og-card/50 text-zinc-400 border border-og-mid/50 hover:bg-og-mid/50 hover:text-zinc-300',
