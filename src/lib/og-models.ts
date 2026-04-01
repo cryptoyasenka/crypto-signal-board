@@ -1,8 +1,9 @@
-import { Client, InferenceMode } from 'opengradient-sdk';
+import * as ort from 'onnxruntime-node';
+import path from 'path';
 import { fetchCandles, type Pair } from './binance';
 
-// ETH/USDT 1-hour volatility model
-const VOLATILITY_MODEL_CID = 'QmRhcpDXfYCKsimTmJYrAVM4Bbvck59Zb2onj3MHv9Kw5N';
+const MODEL_PATH = path.join(process.cwd(), 'models', 'volatility.onnx');
+const HUB_URL = 'https://hub.opengradient.ai/models/og-1hr-volatility-ethusdt';
 
 export interface ModelPrediction {
   modelName: string;
@@ -15,53 +16,34 @@ export interface ModelPrediction {
   explorerUrl: string;
 }
 
-let ogClient: Client | null = null;
+let session: ort.InferenceSession | null = null;
 
-function getClient(): Client {
-  if (ogClient) return ogClient;
-  const pk = process.env.APP_WALLET_PRIVATE_KEY;
-  if (!pk) throw new Error('APP_WALLET_PRIVATE_KEY not set');
-  ogClient = new Client({ privateKey: pk });
-  return ogClient;
+async function getSession(): Promise<ort.InferenceSession> {
+  if (session) return session;
+  session = await ort.InferenceSession.create(MODEL_PATH);
+  return session;
 }
 
 /**
- * Run the ETH/USDT 1-hour volatility model.
+ * Run the ETH/USDT 1-hour volatility model locally via ONNX Runtime.
  * Input: 10 x 30-min OHLC candles → Output: predicted volatility %
  */
 async function runVolatilityModel(pair: Pair): Promise<ModelPrediction> {
   const candles30m = await fetchCandles(pair, '30m', 10);
 
-  // Model expects: open_high_low_close = [[o,h,l,c], [o,h,l,c], ...]
   const ohlcMatrix = candles30m.map((c) => [c.open, c.high, c.low, c.close]);
 
-  console.log('[og-models] Running volatility model for', pair, '- input:', ohlcMatrix.length, 'candles');
+  console.log('[og-models] Running local ONNX volatility model for', pair, '- input:', ohlcMatrix.length, 'candles');
 
-  const client = getClient();
-  const [txHash, output] = await client.infer(
-    VOLATILITY_MODEL_CID,
-    InferenceMode.VANILLA,
-    { open_high_low_close: ohlcMatrix as number[][] },
-  );
+  const flat = new Float32Array(ohlcMatrix.flat());
+  const inputTensor = new ort.Tensor('float32', flat, [10, 4]);
 
-  console.log('[og-models] Volatility result:', JSON.stringify(output));
+  const sess = await getSession();
+  const results = await sess.run({ open_high_low_close: inputTensor });
 
-  // Extract volatility value — model outputs Y as float percentage
-  let volatility = 0;
-  if (output && typeof output === 'object') {
-    const out = output as Record<string, unknown>;
-    if (typeof out.Y === 'number') {
-      volatility = out.Y;
-    } else if (Array.isArray(out.Y)) {
-      volatility = Number(out.Y[0]) || 0;
-    } else {
-      // Try to find any numeric output
-      for (const val of Object.values(out)) {
-        if (typeof val === 'number') { volatility = val; break; }
-        if (Array.isArray(val) && typeof val[0] === 'number') { volatility = val[0]; break; }
-      }
-    }
-  }
+  const volatility = results.Y.data[0] as number;
+
+  console.log('[og-models] Volatility result:', volatility);
 
   const absVol = Math.abs(volatility);
   let interpretation: string;
@@ -83,13 +65,13 @@ async function runVolatilityModel(pair: Pair): Promise<ModelPrediction> {
 
   return {
     modelName: '1hr Volatility Forecast',
-    modelCid: VOLATILITY_MODEL_CID,
+    modelCid: 'og-1hr-volatility-ethusdt',
     prediction: `${volatility.toFixed(4)}%`,
     rawValue: volatility,
     interpretation,
     signal,
-    txHash,
-    explorerUrl: `https://explorer.opengradient.ai/tx/${txHash}`,
+    txHash: 'local-onnx',
+    explorerUrl: HUB_URL,
   };
 }
 

@@ -58,7 +58,7 @@ export function ModelHubPanel({ predictions, error }: { predictions: ModelPredic
         <Brain className="w-4 h-4 text-violet-400" />
         <h3 className="text-white font-semibold">Model Hub — ML Predictions</h3>
         <span className="text-[10px] text-violet-400/60 bg-violet-500/10 px-1.5 py-0.5 rounded">
-          on-chain ONNX
+          ONNX Model
         </span>
       </div>
 
@@ -92,7 +92,7 @@ export function ModelHubPanel({ predictions, error }: { predictions: ModelPredic
               className="inline-flex items-center gap-1 text-[10px] text-violet-400/60 hover:text-violet-400 mt-2 transition-colors"
             >
               <ExternalLink className="w-2.5 h-2.5" />
-              Verify on-chain →
+              {pred.txHash === 'local-onnx' ? 'View on Model Hub →' : 'Verify on-chain →'}
             </a>
           </div>
         ))}
