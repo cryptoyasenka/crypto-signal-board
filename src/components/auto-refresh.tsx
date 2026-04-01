@@ -85,7 +85,7 @@ export function AutoRefresh({ onRefresh, loading, intervalSec = 60 }: Props) {
         ) : (
           <>
             <Play className="w-3 h-3" />
-            <span>Auto</span>
+            <span>Auto-refresh</span>
           </>
         )}
       </span>

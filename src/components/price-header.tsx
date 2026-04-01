@@ -11,6 +11,14 @@ interface Props {
   low24h: number;
 }
 
+function fmt(p: number): string {
+  if (p >= 1000) return p.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (p >= 1) return p.toFixed(2);
+  if (p >= 0.01) return p.toFixed(4);
+  if (p >= 0.0001) return p.toFixed(6);
+  return p.toFixed(8);
+}
+
 export function PriceHeader({ pair, price, changePercent, high24h, low24h }: Props) {
   const isUp = changePercent >= 0;
   const symbol = pair.replace('USDT', '');
@@ -31,17 +39,17 @@ export function PriceHeader({ pair, price, changePercent, high24h, low24h }: Pro
           </div>
         </div>
         <div className="text-3xl sm:text-4xl font-bold font-mono text-white">
-          ${price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          ${fmt(price)}
         </div>
       </div>
       <div className="flex gap-6 text-sm">
         <div>
           <div className="text-zinc-500 text-xs">24h High</div>
-          <div className="text-zinc-300 font-mono">${high24h.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div className="text-zinc-300 font-mono">${fmt(high24h)}</div>
         </div>
         <div>
           <div className="text-zinc-500 text-xs">24h Low</div>
-          <div className="text-zinc-300 font-mono">${low24h.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div className="text-zinc-300 font-mono">${fmt(low24h)}</div>
         </div>
       </div>
     </div>

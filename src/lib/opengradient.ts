@@ -243,6 +243,14 @@ async function callTEE(prompt: string): Promise<{ content: string; txHash: strin
   return { content: data?.choices?.[0]?.message?.content ?? '', txHash };
 }
 
+function fmtPrice(p: number): string {
+  if (p >= 1000) return p.toFixed(2);
+  if (p >= 1) return p.toFixed(2);
+  if (p >= 0.01) return p.toFixed(4);
+  if (p >= 0.0001) return p.toFixed(6);
+  return p.toFixed(8);
+}
+
 function buildPrompt(
   pair: string,
   price: number,
@@ -268,10 +276,10 @@ TASK: Analyze ${pair} and provide a trading signal with macro risk assessment.
 
 CURRENT MARKET DATA:
 - Pair: ${pair}
-- Price: $${price.toFixed(2)}
+- Price: $${fmtPrice(price)}
 - 24h Change: ${stats.priceChangePercent.toFixed(2)}%
-- 24h High: $${stats.high.toFixed(2)}
-- 24h Low: $${stats.low.toFixed(2)}
+- 24h High: $${fmtPrice(stats.high)}
+- 24h Low: $${fmtPrice(stats.low)}
 - 24h Volume: ${stats.volume.toFixed(0)}
 
 RECENT 1H CANDLES (last 10):
@@ -300,7 +308,13 @@ Respond with ONLY valid JSON in this exact format:
 }
 
 If no significant macro events are happening, return an empty macro_events array and "low" macro_risk.
-Be honest about uncertainty. Confidence should reflect how aligned the signals are (50 = mixed, 80+ = strong consensus).`;
+Be honest about uncertainty. Confidence MUST vary based on signal alignment:
+- 30-45: signals strongly conflict (e.g., 3 bullish vs 3 bearish)
+- 46-59: mixed signals, no clear direction
+- 60-74: moderate alignment, slight lean
+- 75-89: strong alignment across most indicators
+- 90+: near-unanimous signals with supporting macro context
+Do NOT default to 58 or any fixed number. Calculate based on the actual indicator split above.`;
 }
 
 export async function getAIVerdict(

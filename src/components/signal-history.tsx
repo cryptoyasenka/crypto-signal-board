@@ -25,6 +25,14 @@ interface Props {
   refreshKey: number;
 }
 
+function fmtPrice(p: number): string {
+  if (p >= 1000) return p.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (p >= 1) return p.toFixed(2);
+  if (p >= 0.01) return p.toFixed(4);
+  if (p >= 0.0001) return p.toFixed(6);
+  return p.toFixed(8);
+}
+
 export function SignalHistory({ refreshKey }: Props) {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [expanded, setExpanded] = useState(false);
@@ -74,7 +82,7 @@ export function SignalHistory({ refreshKey }: Props) {
               <div className="flex items-center gap-3">
                 <span className="text-xs font-semibold text-zinc-300 w-10">{symbol}</span>
                 <span className="text-xs font-mono text-zinc-400">
-                  ${entry.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  ${fmtPrice(entry.price)}
                 </span>
               </div>
               <div className="flex items-center gap-3">
