@@ -1,9 +1,8 @@
-import * as ort from 'onnxruntime-node';
 import path from 'path';
 import fs from 'fs';
 import { fetchCandles, type Pair } from './binance';
 
-const MODEL_PATH = path.join(process.cwd(), 'models', 'volatility.onnx');
+const WEIGHTS_PATH = path.join(process.cwd(), 'models', 'volatility-weights.json');
 const HUB_URL = 'https://hub.opengradient.ai/models/og-1hr-volatility-ethusdt';
 
 export interface ModelPrediction {
@@ -17,35 +16,46 @@ export interface ModelPrediction {
   explorerUrl: string;
 }
 
-let session: ort.InferenceSession | null = null;
+interface ModelWeights {
+  W: number[][];  // [40][1]
+  B: number[];    // [1]
+}
 
-async function getSession(): Promise<ort.InferenceSession> {
-  if (session) return session;
-  if (!fs.existsSync(MODEL_PATH)) {
-    throw new Error('Model file not found — models/volatility.onnx is missing');
+let weights: ModelWeights | null = null;
+
+function getWeights(): ModelWeights {
+  if (weights) return weights;
+  if (!fs.existsSync(WEIGHTS_PATH)) {
+    throw new Error('Model weights not found — models/volatility-weights.json is missing');
   }
-  session = await ort.InferenceSession.create(MODEL_PATH);
-  return session;
+  weights = JSON.parse(fs.readFileSync(WEIGHTS_PATH, 'utf-8')) as ModelWeights;
+  return weights;
 }
 
 /**
- * Run the ETH/USDT 1-hour volatility model locally via ONNX Runtime.
+ * Pure TypeScript inference: Reshape [10,4] -> [1,40], MatMul with W, Add B, Abs.
+ */
+function infer(ohlcFlat: number[]): number {
+  const { W, B } = getWeights();
+  // MatMul: [1,40] x [40,1] -> scalar
+  let sum = 0;
+  for (let i = 0; i < 40; i++) {
+    sum += ohlcFlat[i] * W[i][0];
+  }
+  return Math.abs(sum + B[0]);
+}
+
+/**
+ * Run the 1-hour volatility model locally.
  * Input: 10 x 30-min OHLC candles → Output: predicted volatility %
  */
 async function runVolatilityModel(pair: Pair): Promise<ModelPrediction> {
   const candles30m = await fetchCandles(pair, '30m', 10);
+  const ohlcFlat = candles30m.flatMap((c) => [c.open, c.high, c.low, c.close]);
 
-  const ohlcMatrix = candles30m.map((c) => [c.open, c.high, c.low, c.close]);
+  console.log('[og-models] Running volatility model for', pair, '- input:', candles30m.length, 'candles');
 
-  console.log('[og-models] Running local ONNX volatility model for', pair, '- input:', ohlcMatrix.length, 'candles');
-
-  const flat = new Float32Array(ohlcMatrix.flat());
-  const inputTensor = new ort.Tensor('float32', flat, [10, 4]);
-
-  const sess = await getSession();
-  const results = await sess.run({ open_high_low_close: inputTensor });
-
-  const volatility = results.Y.data[0] as number;
+  const volatility = infer(ohlcFlat);
 
   console.log('[og-models] Volatility result:', volatility);
 
