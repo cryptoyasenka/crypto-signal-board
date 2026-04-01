@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/cn';
-import { RefreshCw, Pause, Play } from 'lucide-react';
+import { RefreshCw, Play } from 'lucide-react';
 
 interface Props {
   onRefresh: () => void;
@@ -38,7 +38,6 @@ export function AutoRefresh({ onRefresh, loading, intervalSec = 60 }: Props) {
     };
   }, [enabled, intervalSec, onRefresh]);
 
-  // Pause countdown while loading
   useEffect(() => {
     if (loading && enabled) {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -67,13 +66,13 @@ export function AutoRefresh({ onRefresh, loading, intervalSec = 60 }: Props) {
       className={cn(
         'relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all overflow-hidden',
         enabled
-          ? 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/30'
-          : 'bg-zinc-800/50 text-zinc-400 border border-zinc-700/50 hover:bg-zinc-700/50',
+          ? 'bg-og-primary/15 text-og-primary border border-og-primary/30'
+          : 'bg-og-card/50 text-zinc-400 border border-og-mid/50 hover:bg-og-mid/50',
       )}
     >
       {enabled && (
         <div
-          className="absolute inset-0 bg-cyan-500/10 transition-all duration-1000"
+          className="absolute inset-0 bg-og-primary/10 transition-all duration-1000"
           style={{ width: `${progress}%` }}
         />
       )}

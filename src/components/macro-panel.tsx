@@ -5,15 +5,15 @@ import type { MacroEvent } from '@/lib/types';
 import { AlertTriangle, Shield, Zap } from 'lucide-react';
 
 const riskConfig = {
-  low: { icon: Shield, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30', label: 'Low Risk' },
-  medium: { icon: Zap, color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/30', label: 'Medium Risk' },
-  high: { icon: AlertTriangle, color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/30', label: 'High Risk' },
+  low: { icon: Shield, color: 'text-og-success', bg: 'bg-og-success/10 border-og-success/30', label: 'Low Risk' },
+  medium: { icon: Zap, color: 'text-og-warning', bg: 'bg-og-warning/10 border-og-warning/30', label: 'Medium Risk' },
+  high: { icon: AlertTriangle, color: 'text-og-error', bg: 'bg-og-error/10 border-og-error/30', label: 'High Risk' },
 };
 
 const impactColors = {
-  high: 'text-red-400 bg-red-500/10',
-  medium: 'text-yellow-400 bg-yellow-500/10',
-  low: 'text-zinc-400 bg-zinc-500/10',
+  high: 'text-og-error bg-og-error/10',
+  medium: 'text-og-warning bg-og-warning/10',
+  low: 'text-zinc-400 bg-og-mid/30',
 };
 
 interface Props {

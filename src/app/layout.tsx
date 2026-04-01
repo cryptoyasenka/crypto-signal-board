@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Crypto Signal Board — Verifiable AI Signals',
+  title: 'Crypto Signal Board — Verifiable AI Signals by OpenGradient',
   description:
     'AI-powered crypto trading signals verified in a Trusted Execution Environment. 6 technical indicators + macro risk analysis by OpenGradient.',
 };
@@ -25,7 +25,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} dark`}>
-      <body className="min-h-screen bg-zinc-950 font-sans antialiased">{children}</body>
+      <head>
+        <script
+          src="https://cdn.jsdelivr.net/gh/golldyck/opengradient-brand-skill@main/og-skill.js"
+          defer
+        />
+      </head>
+      <body className="min-h-screen bg-og-navy font-sans antialiased">{children}</body>
     </html>
   );
 }

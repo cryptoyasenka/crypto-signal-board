@@ -3,6 +3,18 @@
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* OpenGradient Brand Palette */
+  --color-og-primary: #24bce3;
+  --color-og-soft: #50c9e9;
+  --color-og-light: #bdebf7;
+  --color-og-navy: #0a0f19;
+  --color-og-card: #141e32;
+  --color-og-mid: #1d2c4b;
+  --color-og-teal: #0e4b5b;
+  --color-og-success: #41c885;
+  --color-og-warning: #c49508;
+  --color-og-error: #f23a3a;
 }
 
 /* Hide scrollbar for pair selector */
@@ -12,4 +24,23 @@
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* OG glow effect for cards on hover */
+.og-glow {
+  transition: box-shadow 0.3s ease;
+}
+.og-glow:hover {
+  box-shadow: 0 0 20px rgba(36, 188, 227, 0.08);
+}
+
+/* OG hero gradient background */
+.og-hero-gradient {
+  background: linear-gradient(135deg, #0a0f19 0%, #141e32 50%, #0e4b5b 100%);
+}
+
+/* OG subtle card border glow */
+.og-card {
+  background: rgba(20, 30, 50, 0.5);
+  border-color: rgba(29, 44, 75, 0.5);
 }

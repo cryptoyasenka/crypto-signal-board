@@ -19,11 +19,11 @@ export function PriceHeader({ pair, price, changePercent, high24h, low24h }: Pro
     <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
       <div>
         <div className="flex items-center gap-3 mb-1">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white">{symbol}/USDT</h2>
+          <h2 className="text-2xl sm:text-3xl font-light tracking-tight text-white">{symbol}/USDT</h2>
           <div
             className={cn(
               'flex items-center gap-1 px-2 py-0.5 rounded-full text-sm font-semibold',
-              isUp ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400',
+              isUp ? 'bg-og-success/10 text-og-success' : 'bg-og-error/10 text-og-error',
             )}
           >
             {isUp ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}

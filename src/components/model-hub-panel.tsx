@@ -5,9 +5,9 @@ import { Brain, ExternalLink, Activity, TrendingDown, Minus } from 'lucide-react
 
 function SignalBadge({ signal }: { signal: ModelPrediction['signal'] }) {
   const styles = {
-    bullish: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    bearish: 'bg-red-500/10 text-red-400 border-red-500/20',
-    neutral: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
+    bullish: 'bg-og-success/10 text-og-success border-og-success/20',
+    bearish: 'bg-og-error/10 text-og-error border-og-error/20',
+    neutral: 'bg-og-mid/30 text-zinc-400 border-og-mid/40',
   };
   const icons = {
     bullish: <Activity className="w-3 h-3" />,
@@ -25,12 +25,11 @@ function SignalBadge({ signal }: { signal: ModelPrediction['signal'] }) {
 
 function VolatilityBar({ value }: { value: number }) {
   const abs = Math.abs(value);
-  // Map 0-5% volatility to 0-100% width
   const pct = Math.min(abs / 5 * 100, 100);
-  const color = abs < 0.5 ? 'bg-emerald-500' : abs < 1.5 ? 'bg-yellow-500' : abs < 3 ? 'bg-orange-500' : 'bg-red-500';
+  const color = abs < 0.5 ? 'bg-og-success' : abs < 1.5 ? 'bg-og-warning' : abs < 3 ? 'bg-orange-500' : 'bg-og-error';
 
   return (
-    <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+    <div className="w-full h-1.5 bg-og-navy rounded-full overflow-hidden">
       <div className={`h-full rounded-full transition-all ${color}`} style={{ width: `${pct}%` }} />
     </div>
   );
@@ -41,11 +40,11 @@ export function ModelHubPanel({ predictions, error }: { predictions: ModelPredic
 
   if (error) {
     return (
-      <div className="rounded-xl border border-violet-500/10 bg-violet-500/5 p-4">
+      <div className="rounded-xl border border-og-primary/10 bg-og-primary/5 p-4">
         <div className="flex items-center gap-2 mb-2">
-          <Brain className="w-4 h-4 text-violet-400/50" />
+          <Brain className="w-4 h-4 text-og-primary/50" />
           <h3 className="text-zinc-400 font-medium text-sm">Model Hub</h3>
-          <span className="text-[10px] text-red-400/60 bg-red-500/10 px-1.5 py-0.5 rounded">offline</span>
+          <span className="text-[10px] text-og-error/60 bg-og-error/10 px-1.5 py-0.5 rounded">offline</span>
         </div>
         <p className="text-xs text-zinc-500">{error}</p>
       </div>
@@ -53,18 +52,18 @@ export function ModelHubPanel({ predictions, error }: { predictions: ModelPredic
   }
 
   return (
-    <div className="rounded-xl border border-violet-500/20 bg-violet-500/5 p-5">
+    <div className="rounded-xl border border-og-primary/20 bg-og-primary/5 p-5">
       <div className="flex items-center gap-2 mb-4">
-        <Brain className="w-4 h-4 text-violet-400" />
+        <Brain className="w-4 h-4 text-og-primary" />
         <h3 className="text-white font-semibold">Model Hub — ML Predictions</h3>
-        <span className="text-[10px] text-violet-400/60 bg-violet-500/10 px-1.5 py-0.5 rounded">
+        <span className="text-[10px] text-og-primary/60 bg-og-primary/10 px-1.5 py-0.5 rounded font-mono">
           ONNX Model
         </span>
       </div>
 
       <div className="space-y-4">
         {predictions.map((pred) => (
-          <div key={pred.modelCid} className="rounded-lg border border-zinc-800/50 bg-zinc-900/50 p-4">
+          <div key={pred.modelCid} className="rounded-lg border border-og-mid/50 og-card p-4">
             <div className="flex items-start justify-between mb-2">
               <div>
                 <div className="flex items-center gap-2 mb-1">
@@ -89,7 +88,7 @@ export function ModelHubPanel({ predictions, error }: { predictions: ModelPredic
               href={pred.explorerUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-[10px] text-violet-400/60 hover:text-violet-400 mt-2 transition-colors"
+              className="inline-flex items-center gap-1 text-[10px] text-og-primary/60 hover:text-og-primary mt-2 transition-colors"
             >
               <ExternalLink className="w-2.5 h-2.5" />
               {pred.txHash === 'local-onnx' ? 'View on Model Hub →' : 'Verify on-chain →'}

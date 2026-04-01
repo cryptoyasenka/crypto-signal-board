@@ -31,13 +31,11 @@ export function PriceChart({ candles, className }: Props) {
   const yScale = (price: number) =>
     padding.top + chartH - ((price - minPrice) / priceRange) * chartH;
 
-  // Grid lines
   const gridLines = 4;
   const gridPrices = Array.from({ length: gridLines }, (_, i) =>
     minPrice + (priceRange * (i + 1)) / (gridLines + 1),
   );
 
-  // Format price for axis
   const formatPrice = (p: number) => {
     if (p >= 1000) return p.toLocaleString(undefined, { maximumFractionDigits: 0 });
     if (p >= 1) return p.toFixed(2);
@@ -46,14 +44,13 @@ export function PriceChart({ candles, className }: Props) {
     return p.toFixed(8);
   };
 
-  // Time labels (show ~5 labels)
   const labelStep = Math.max(1, Math.floor(candles.length / 5));
   const timeLabels = candles
     .map((c, i) => ({ i, time: c.time }))
     .filter((_, i) => i % labelStep === 0);
 
   return (
-    <div className={cn('rounded-xl border border-zinc-800/50 bg-zinc-900/30 p-4', className)}>
+    <div className={cn('rounded-xl border border-og-mid/50 og-card p-4', className)}>
       <h3 className="text-white font-semibold text-sm mb-3">Price Action (1h candles)</h3>
       <svg
         viewBox={`0 0 ${width} ${height}`}
@@ -68,14 +65,14 @@ export function PriceChart({ candles, className }: Props) {
               x2={width - padding.right}
               y1={yScale(price)}
               y2={yScale(price)}
-              stroke="#27272a"
+              stroke="#1d2c4b"
               strokeWidth={0.5}
             />
             <text
               x={padding.left - 6}
               y={yScale(price) + 3}
               textAnchor="end"
-              fill="#52525b"
+              fill="#4a5568"
               fontSize={9}
               fontFamily="monospace"
             >
@@ -91,7 +88,7 @@ export function PriceChart({ candles, className }: Props) {
             x={padding.left + i * gap + gap / 2}
             y={height - 4}
             textAnchor="middle"
-            fill="#52525b"
+            fill="#4a5568"
             fontSize={8}
             fontFamily="monospace"
           >
@@ -112,22 +109,20 @@ export function PriceChart({ candles, className }: Props) {
 
           return (
             <g key={i}>
-              {/* Wick */}
               <line
                 x1={wickX}
                 x2={wickX}
                 y1={yScale(c.high)}
                 y2={yScale(c.low)}
-                stroke={isGreen ? '#34d399' : '#f87171'}
+                stroke={isGreen ? '#41c885' : '#f23a3a'}
                 strokeWidth={0.8}
               />
-              {/* Body */}
               <rect
                 x={x}
                 y={bodyTop}
                 width={candleWidth}
                 height={bodyH}
-                fill={isGreen ? '#34d399' : '#f87171'}
+                fill={isGreen ? '#41c885' : '#f23a3a'}
                 rx={0.5}
               />
             </g>

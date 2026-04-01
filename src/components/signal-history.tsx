@@ -6,11 +6,11 @@ import { getHistory, clearHistory, type HistoryEntry } from '@/lib/history';
 import { Clock, Trash2, ChevronDown, ChevronUp, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 
 const verdictLabels: Record<string, { label: string; color: string }> = {
-  strong_buy: { label: 'Strong Buy', color: 'text-emerald-300' },
-  buy: { label: 'Buy', color: 'text-emerald-400' },
+  strong_buy: { label: 'Strong Buy', color: 'text-og-success' },
+  buy: { label: 'Buy', color: 'text-og-success' },
   neutral: { label: 'Neutral', color: 'text-zinc-400' },
-  sell: { label: 'Sell', color: 'text-red-400' },
-  strong_sell: { label: 'Strong Sell', color: 'text-red-300' },
+  sell: { label: 'Sell', color: 'text-og-error' },
+  strong_sell: { label: 'Strong Sell', color: 'text-og-error' },
 };
 
 const verdictIcons: Record<string, typeof TrendingUp> = {
@@ -22,7 +22,7 @@ const verdictIcons: Record<string, typeof TrendingUp> = {
 };
 
 interface Props {
-  refreshKey: number; // increment to re-read history
+  refreshKey: number;
 }
 
 export function SignalHistory({ refreshKey }: Props) {
@@ -38,12 +38,12 @@ export function SignalHistory({ refreshKey }: Props) {
   const shown = expanded ? history : history.slice(0, 5);
 
   return (
-    <div className="rounded-xl border border-zinc-800/50 bg-zinc-900/30 p-5">
+    <div className="rounded-xl border border-og-mid/50 og-card p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Clock className="w-4 h-4 text-zinc-500" />
           <h3 className="text-white font-semibold text-sm">Signal History</h3>
-          <span className="text-[10px] text-zinc-600 bg-zinc-800 px-1.5 py-0.5 rounded">
+          <span className="text-[10px] text-zinc-600 bg-og-navy px-1.5 py-0.5 rounded font-mono">
             {history.length}
           </span>
         </div>
@@ -52,7 +52,7 @@ export function SignalHistory({ refreshKey }: Props) {
             clearHistory();
             setHistory([]);
           }}
-          className="flex items-center gap-1 text-xs text-zinc-600 hover:text-red-400 transition-colors"
+          className="flex items-center gap-1 text-xs text-zinc-600 hover:text-og-error transition-colors"
         >
           <Trash2 className="w-3 h-3" />
           Clear
@@ -69,7 +69,7 @@ export function SignalHistory({ refreshKey }: Props) {
           return (
             <div
               key={entry.id}
-              className="flex items-center justify-between py-2 px-3 rounded-lg bg-zinc-800/30 hover:bg-zinc-800/50 transition-colors"
+              className="flex items-center justify-between py-2 px-3 rounded-lg bg-og-navy/50 hover:bg-og-mid/30 transition-colors"
             >
               <div className="flex items-center gap-3">
                 <span className="text-xs font-semibold text-zinc-300 w-10">{symbol}</span>
@@ -85,7 +85,7 @@ export function SignalHistory({ refreshKey }: Props) {
                 <span className="text-[10px] text-zinc-600 font-mono">
                   {entry.confidence}%
                 </span>
-                <span className="text-[10px] text-zinc-600">
+                <span className="text-[10px] text-zinc-600 font-mono">
                   {time.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                   {' '}
                   {time.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
@@ -99,7 +99,7 @@ export function SignalHistory({ refreshKey }: Props) {
       {history.length > 5 && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors mt-3 mx-auto"
+          className="flex items-center gap-1 text-xs text-zinc-500 hover:text-og-primary transition-colors mt-3 mx-auto"
         >
           {expanded ? (
             <>
