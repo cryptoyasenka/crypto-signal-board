@@ -72,8 +72,8 @@ export default function Home() {
               onClick={() => { setData(null); setError(null); setLoading(false); }}
               className="flex items-center gap-3 hover:opacity-80 transition-opacity"
             >
-              <div data-og-logo="wordmark" className="h-5" />
-              <span className="text-[10px] text-og-soft/40 bg-og-card px-1.5 py-0.5 rounded font-mono hidden sm:inline">
+              <div data-og-logo="wordmark" className="h-6" />
+              <span className="text-sm text-og-soft/60 font-medium hidden sm:inline">
                 Signal Board
               </span>
             </button>
