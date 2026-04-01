@@ -1,9 +1,9 @@
 import path from 'path';
 import fs from 'fs';
-import * as ort from 'onnxruntime-node';
 import { fetchCandles, type Pair } from './binance';
 
-const MODEL_PATH = path.join(process.cwd(), 'models', 'volatility.onnx');
+const ONNX_PATH = path.join(process.cwd(), 'models', 'volatility.onnx');
+const WEIGHTS_PATH = path.join(process.cwd(), 'models', 'volatility-weights.json');
 const HUB_URL = 'https://hub.opengradient.ai/models/og-1hr-volatility-ethusdt';
 
 export interface ModelPrediction {
@@ -17,45 +17,88 @@ export interface ModelPrediction {
   explorerUrl: string;
 }
 
-let cachedSession: ort.InferenceSession | null = null;
+// --- ONNX Runtime inference (preferred) ---
 
-async function getSession(): Promise<ort.InferenceSession> {
-  if (cachedSession) return cachedSession;
-  if (!fs.existsSync(MODEL_PATH)) {
-    throw new Error('ONNX model not found — models/volatility.onnx is missing');
+let onnxSession: unknown = null;
+let onnxAvailable: boolean | null = null;
+
+async function tryOnnxInference(ohlcFlat: number[]): Promise<number | null> {
+  if (onnxAvailable === false) return null;
+
+  try {
+    // Dynamic import — fails gracefully on platforms without native binaries
+    const ort = await import('onnxruntime-node');
+
+    if (!onnxSession) {
+      if (!fs.existsSync(ONNX_PATH)) return null;
+      onnxSession = await ort.InferenceSession.create(ONNX_PATH);
+    }
+
+    const session = onnxSession as import('onnxruntime-node').InferenceSession;
+    const inputTensor = new ort.Tensor('float32', new Float32Array(ohlcFlat), [10, 4]);
+    const results = await session.run({ open_high_low_close: inputTensor });
+    const value = results.Y.data[0] as number;
+
+    onnxAvailable = true;
+    console.log('[og-models] ONNX runtime inference OK');
+    return Math.abs(value);
+  } catch {
+    onnxAvailable = false;
+    console.warn('[og-models] onnxruntime-node unavailable, using TS fallback');
+    return null;
   }
-  cachedSession = await ort.InferenceSession.create(MODEL_PATH);
-  return cachedSession;
 }
 
-/**
- * Run the 1-hour volatility model locally via onnxruntime-node.
- * Input: 10 x 30-min OHLC candles (tensor [10, 4]) → Output: predicted volatility %
- */
+// --- Pure TypeScript fallback (for Vercel serverless) ---
+
+interface ModelWeights {
+  W: number[][];
+  B: number[];
+}
+
+let weights: ModelWeights | null = null;
+
+function tsFallbackInference(ohlcFlat: number[]): number {
+  if (!weights) {
+    if (!fs.existsSync(WEIGHTS_PATH)) {
+      throw new Error('Neither ONNX runtime nor weights file available');
+    }
+    weights = JSON.parse(fs.readFileSync(WEIGHTS_PATH, 'utf-8')) as ModelWeights;
+  }
+  let sum = 0;
+  for (let i = 0; i < 40; i++) {
+    sum += ohlcFlat[i] * weights.W[i][0];
+  }
+  return Math.abs(sum + weights.B[0]);
+}
+
+// --- Public API ---
+
 async function runVolatilityModel(pair: Pair): Promise<ModelPrediction> {
   const candles30m = await fetchCandles(pair, '30m', 10);
   const ohlcFlat = candles30m.flatMap((c) => [c.open, c.high, c.low, c.close]);
 
-  console.log('[og-models] Running ONNX volatility model for', pair, '- input:', candles30m.length, 'candles');
+  console.log('[og-models] Running volatility model for', pair, '- input:', candles30m.length, 'candles');
 
-  const session = await getSession();
-  const inputTensor = new ort.Tensor('float32', new Float32Array(ohlcFlat), [10, 4]);
-  const results = await session.run({ open_high_low_close: inputTensor });
-  const volatility = Math.abs(results.Y.data[0] as number);
+  // Try ONNX runtime first, fallback to TS
+  let volatility = await tryOnnxInference(ohlcFlat);
+  const engine = volatility !== null ? 'onnxruntime' : 'ts-fallback';
+  if (volatility === null) {
+    volatility = tsFallbackInference(ohlcFlat);
+  }
 
-  console.log('[og-models] Volatility result:', volatility);
+  console.log(`[og-models] Volatility (${engine}):`, volatility);
 
-  const absVol = Math.abs(volatility);
   let interpretation: string;
   let signal: 'bullish' | 'bearish' | 'neutral';
 
-  if (absVol < 0.5) {
+  if (volatility < 0.5) {
     interpretation = 'Low volatility expected — stable market, range trading favorable';
     signal = 'neutral';
-  } else if (absVol < 1.5) {
+  } else if (volatility < 1.5) {
     interpretation = 'Moderate volatility — normal market conditions';
     signal = 'neutral';
-  } else if (absVol < 3.0) {
+  } else if (volatility < 3.0) {
     interpretation = 'High volatility expected — strong moves likely, use caution';
     signal = 'bearish';
   } else {
@@ -75,9 +118,6 @@ async function runVolatilityModel(pair: Pair): Promise<ModelPrediction> {
   };
 }
 
-/**
- * Run all available Model Hub models for the given pair.
- */
 export async function runModelHub(pair: Pair): Promise<ModelPrediction[]> {
   const results: ModelPrediction[] = [];
 
