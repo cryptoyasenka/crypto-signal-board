@@ -70,10 +70,10 @@ export default function Home() {
           <div className="flex items-center justify-between mb-2 sm:mb-0">
             <button
               onClick={() => { setData(null); setError(null); setLoading(false); }}
-              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+              className="flex items-center gap-2.5 hover:opacity-90 transition-opacity group"
             >
               <div data-og-logo="wordmark" className="h-6" />
-              <span className="text-sm text-og-soft/60 font-medium hidden sm:inline">
+              <span className="text-base font-semibold text-white group-hover:text-og-primary transition-colors hidden sm:inline">
                 Signal Board
               </span>
             </button>
@@ -88,26 +88,44 @@ export default function Home() {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Initial state */}
         {!data && !loading && !error && (
-          <div className="flex flex-col items-center justify-center py-32 text-center">
+          <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-20 h-20 rounded-2xl og-hero-gradient border border-og-mid/50 flex items-center justify-center mb-6">
               <BarChart3 className="w-10 h-10 text-og-primary" />
             </div>
-            <h1 className="text-3xl font-light tracking-tight mb-2">
+            <h1 className="text-3xl sm:text-4xl font-light tracking-tight mb-3">
               Crypto Signal Board
             </h1>
-            <p className="text-zinc-400 max-w-md mb-2">
-              6 technical indicators + AI macro analysis, verified in a Trusted Execution Environment.
+            <p className="text-zinc-400 max-w-lg mb-6 leading-relaxed">
+              Select a trading pair, get an instant short-term signal: 6 technical indicators calculated from 48 hours of candle data, combined with an AI macro-risk verdict generated inside an{' '}
+              <span className="text-og-primary">OpenGradient TEE</span> — cryptographically verified so no one can tamper with the result.
             </p>
-            <p className="text-zinc-500 text-sm mb-8">
-              Transparent signals. Verifiable predictions. No hidden agenda.
-            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl mb-10 text-left">
+              <div className="rounded-xl border border-og-mid/50 og-card p-4">
+                <BarChart3 className="w-5 h-5 text-og-primary mb-2" />
+                <div className="text-sm font-medium text-zinc-200 mb-1">Technical Analysis</div>
+                <p className="text-xs text-zinc-500 leading-relaxed">SMA, EMA, RSI, MACD, Bollinger Bands, Volume — computed from Binance 1h candles.</p>
+              </div>
+              <div className="rounded-xl border border-og-mid/50 og-card p-4">
+                <ShieldCheck className="w-5 h-5 text-og-success mb-2" />
+                <div className="text-sm font-medium text-zinc-200 mb-1">TEE-Verified AI</div>
+                <p className="text-xs text-zinc-500 leading-relaxed">LLM runs inside a Trusted Execution Environment. Every prediction is signed and tamper-proof.</p>
+              </div>
+              <div className="rounded-xl border border-og-mid/50 og-card p-4">
+                <Brain className="w-5 h-5 text-og-soft mb-2" />
+                <div className="text-sm font-medium text-zinc-200 mb-1">ML Volatility Forecast</div>
+                <p className="text-xs text-zinc-500 leading-relaxed">ONNX model from OpenGradient Model Hub predicts 1-hour price volatility.</p>
+              </div>
+            </div>
+
             <button
               onClick={() => analyze()}
-              className="flex items-center gap-2 bg-og-primary hover:bg-og-soft text-og-navy font-semibold px-6 py-3 rounded-xl transition-colors"
+              className="flex items-center gap-2 bg-og-primary hover:bg-og-soft text-og-navy font-semibold px-8 py-3.5 rounded-xl transition-colors text-lg"
             >
-              <BarChart3 className="w-4 h-4" />
+              <BarChart3 className="w-5 h-5" />
               Analyze {pair.replace('USDT', '')}/USDT
             </button>
+            <p className="text-zinc-600 text-xs mt-3">Choose a pair above, then click Analyze</p>
           </div>
         )}
 
