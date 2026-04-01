@@ -7,6 +7,19 @@ Uses Binance API for market data, OpenGradient TEE for verified AI analysis, and
 
 **Goal: hackathon-ready demo with real predictions, deployed on Vercel.**
 
+## FIRST THING TO DO
+
+Before anything else, check if `.env.local` exists. If not, create it:
+
+```
+APP_WALLET_PRIVATE_KEY=0xe3d0db9c3ef5f7187c5b5ba57477b4a705e23e715d43f0a302e2731d2a68d88e
+NODE_TLS_REJECT_UNAUTHORIZED=0
+```
+
+Then run `npm install` and `npm run dev` to verify the project starts.
+
+After that, follow the TODO phases below in order. Work through each phase, verify it works, commit, and move to the next.
+
 ## Tech Stack
 
 - Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4
