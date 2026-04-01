@@ -68,12 +68,15 @@ export default function Home() {
       <div className="border-b border-og-mid/50 bg-og-navy/90 backdrop-blur-md sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between mb-2 sm:mb-0">
-            <div className="flex items-center gap-3">
+            <button
+              onClick={() => { setData(null); setError(null); setLoading(false); }}
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+            >
               <div data-og-logo="wordmark" className="h-5" />
               <span className="text-[10px] text-og-soft/40 bg-og-card px-1.5 py-0.5 rounded font-mono hidden sm:inline">
                 Signal Board
               </span>
-            </div>
+            </button>
             {data && <AutoRefresh onRefresh={() => analyze()} loading={loading} />}
           </div>
           <div className="sm:mt-0">
@@ -136,6 +139,23 @@ export default function Home() {
               high24h={data.stats.high}
               low24h={data.stats.low}
             />
+
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-500">
+              <span className="flex items-center gap-1.5">
+                <BarChart3 className="w-3 h-3 text-og-primary/60" />
+                Short-term signal based on last 48h of 1-hour candles
+              </span>
+              <span className="hidden sm:inline text-zinc-700">|</span>
+              <span className="flex items-center gap-1.5">
+                <ShieldCheck className="w-3 h-3 text-og-success/60" />
+                AI verdict by OpenGradient TEE
+              </span>
+              <span className="hidden sm:inline text-zinc-700">|</span>
+              <span className="flex items-center gap-1.5">
+                <Brain className="w-3 h-3 text-og-soft/60" />
+                Volatility forecast — 1h ahead via ONNX model
+              </span>
+            </div>
 
             <PriceChart candles={data.candles} />
 
