@@ -67,7 +67,7 @@ export default function Home() {
       {/* Header */}
       <div className="border-b border-og-mid/50 bg-og-navy/90 backdrop-blur-md sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between mb-2 sm:mb-0">
+          <div className="flex items-center justify-between">
             <button
               onClick={() => { setData(null); setError(null); setLoading(false); }}
               className="flex items-center gap-2.5 hover:opacity-90 transition-opacity group"
@@ -79,7 +79,7 @@ export default function Home() {
             </button>
             {data && <AutoRefresh onRefresh={() => analyze()} loading={loading} />}
           </div>
-          <div className="sm:mt-0">
+          <div className="mt-3">
             <PairSelector selected={pair} onSelect={handlePairSelect} disabled={loading} />
           </div>
         </div>
@@ -123,9 +123,9 @@ export default function Home() {
               className="flex items-center gap-2 bg-og-primary hover:bg-og-soft text-og-navy font-semibold px-8 py-3.5 rounded-xl transition-colors text-lg"
             >
               <BarChart3 className="w-5 h-5" />
-              Analyze {pair.replace('USDT', '')}/USDT
+              Analyze Token
             </button>
-            <p className="text-zinc-600 text-xs mt-3">Choose a pair above, then click Analyze</p>
+            <p className="text-zinc-600 text-xs mt-3">Select any of 25 pairs above, then click Analyze</p>
           </div>
         )}
 
