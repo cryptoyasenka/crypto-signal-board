@@ -13,7 +13,7 @@ const PAIRS = [
 ] as const;
 
 const TOP_PAIRS = PAIRS.slice(0, 7);
-const MOBILE_PAIRS = PAIRS.slice(0, 3);
+const MOBILE_COUNT = 4;
 
 interface Props {
   selected: string;
@@ -66,7 +66,7 @@ export function PairSelector({ selected, onSelect, disabled }: Props) {
                   ? 'bg-og-primary/20 text-og-primary border border-og-primary/40'
                   : 'bg-og-card/50 text-zinc-400 border border-og-mid/50 hover:bg-og-mid/50 hover:text-zinc-300',
                 disabled && 'opacity-50 cursor-not-allowed',
-                idx >= MOBILE_PAIRS.length && 'hidden sm:block',
+                idx >= MOBILE_COUNT && 'hidden sm:block',
               )}
             >
               {symbol}
