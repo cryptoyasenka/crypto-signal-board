@@ -1,5 +1,10 @@
 # Crypto Signal Board
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org)
+[![OpenGradient](https://img.shields.io/badge/Verified_by-OpenGradient_TEE-00c2ff)](https://opengradient.ai)
+[![Deploy](https://img.shields.io/badge/Deployed_on-Vercel-black)](https://crypto-signal-board.vercel.app)
+
 **AI-powered crypto trading signals, verified in a Trusted Execution Environment.**
 
 Real-time technical analysis for 25 trading pairs, combined with an LLM macro-risk verdict that runs inside an OpenGradient TEE — every prediction is cryptographically signed and tamper-proof.

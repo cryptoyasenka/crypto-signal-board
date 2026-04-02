@@ -9,6 +9,10 @@
     "type": "git",
     "url": "https://github.com/cryptoyasenka/crypto-signal-board"
   },
+  "homepage": "https://crypto-signal-board.vercel.app",
+  "bugs": {
+    "url": "https://github.com/cryptoyasenka/crypto-signal-board/issues"
+  },
   "keywords": [
     "crypto",
     "trading",
