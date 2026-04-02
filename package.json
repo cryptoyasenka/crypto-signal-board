@@ -2,6 +2,22 @@
   "name": "crypto-signal-board",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "author": "cryptoyasenka",
+  "description": "AI-powered cryptocurrency trading signal dashboard with TEE-verified predictions via OpenGradient",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cryptoyasenka/crypto-signal-board"
+  },
+  "keywords": [
+    "crypto",
+    "trading",
+    "signals",
+    "opengradient",
+    "tee",
+    "nextjs",
+    "ai"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
