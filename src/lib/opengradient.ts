@@ -89,12 +89,13 @@ async function createUptoPayment(
     amount: string;
     payTo: string;
     maxTimeoutSeconds: number;
+    extra?: { facilitatorAddress?: string };
   },
 ) {
   const { privateKeyToAccount } = await import('viem/accounts');
   const { getAddress } = await import('viem');
 
-  const OG_PERMIT2_WITNESS_TYPES = {
+  const UPTO_PERMIT2_WITNESS_TYPES = {
     PermitWitnessTransferFrom: [
       { name: 'permitted', type: 'TokenPermissions' },
       { name: 'spender', type: 'address' },
@@ -108,13 +109,19 @@ async function createUptoPayment(
     ],
     Witness: [
       { name: 'to', type: 'address' },
+      { name: 'facilitator', type: 'address' },
       { name: 'validAfter', type: 'uint256' },
-      { name: 'extra', type: 'bytes' },
     ],
   } as const;
 
-  const OG_UPTO_PROXY = '0xBe08D629cc799E6C17200F454F68A61E017038C8';
+  const X402_UPTO_PERMIT2_PROXY = '0x4020A4f3b7b90ccA423B9fabCc0CE57C6C240002';
   const PERMIT2_ADDRESS = '0x000000000022D473030F116dDEE9F6B43aC78BA3' as const;
+
+  const facilitatorAddress = requirements.extra?.facilitatorAddress;
+  if (!facilitatorAddress) {
+    throw new Error('Missing facilitatorAddress in payment requirements.extra');
+  }
+
   const account = privateKeyToAccount(privateKey as `0x${string}`);
   const chainId = parseInt(requirements.network.split(':')[1]);
   const now = Math.floor(Date.now() / 1000);
@@ -131,20 +138,20 @@ async function createUptoPayment(
 
   const signature = await account.signTypedData({
     domain: { name: 'Permit2', chainId, verifyingContract: PERMIT2_ADDRESS },
-    types: OG_PERMIT2_WITNESS_TYPES,
+    types: UPTO_PERMIT2_WITNESS_TYPES,
     primaryType: 'PermitWitnessTransferFrom',
     message: {
       permitted: {
         token: getAddress(requirements.asset),
         amount: BigInt(requirements.amount),
       },
-      spender: getAddress(OG_UPTO_PROXY),
+      spender: getAddress(X402_UPTO_PERMIT2_PROXY),
       nonce,
       deadline: BigInt(deadline),
       witness: {
         to: getAddress(requirements.payTo),
+        facilitator: getAddress(facilitatorAddress),
         validAfter: BigInt(validAfter),
-        extra: '0x' as `0x${string}`,
       },
     },
   });
@@ -159,10 +166,14 @@ async function createUptoPayment(
           token: getAddress(requirements.asset),
           amount: requirements.amount,
         },
-        spender: getAddress(OG_UPTO_PROXY),
+        spender: getAddress(X402_UPTO_PERMIT2_PROXY),
         nonce: nonce.toString(),
         deadline,
-        witness: { to: getAddress(requirements.payTo), validAfter, extra: '0x' },
+        witness: {
+          to: getAddress(requirements.payTo),
+          facilitator: getAddress(facilitatorAddress),
+          validAfter,
+        },
       },
     },
   };
